@@ -17,7 +17,7 @@ namespace Photography.DataAccess
         public T Add(T itemToAdd)
         {
             var entity = dbContext.Add<T>(itemToAdd);
-            // dbContext.SaveChanges();
+            dbContext.SaveChanges();
             return entity.Entity;
         }
 
@@ -42,7 +42,7 @@ namespace Photography.DataAccess
             if (entityToRemove != null)
             {
                 dbContext.Remove<T>(entityToRemove);
-
+                dbContext.SaveChanges();
                 return true;
             }
             return false;
@@ -53,7 +53,7 @@ namespace Photography.DataAccess
             var entity = dbContext.Set<T>()
                                   .Update(itemToUpdate);
             //dbContext.Entry(itemToUpdate).State = EntityState.Modified;
-            //dbContext.SaveChanges();          
+            dbContext.SaveChanges();          
             return entity.Entity;
         }
     }

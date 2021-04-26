@@ -13,12 +13,12 @@ namespace Photography.Controllers
 {
     public class AccountsController : Controller
     {
-        private readonly PhotographyContext _context;
+        //private readonly PhotographyContext _context;
         private readonly AccountService accountService;
 
         public AccountsController(AccountService AccountService, PhotographyContext context)
         {
-            _context = context;
+            //_context = context;
             this.accountService = AccountService;
         }
 
@@ -28,7 +28,7 @@ namespace Photography.Controllers
             var accounts = accountService.GetAccounts();
             return View(accounts);
         }
-
+        /*
         // GET: Accounts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -159,5 +159,6 @@ namespace Photography.Controllers
         {
             return _context.Accounts.Any(e => e.Id == id);
         }
+    }*/
     }
 }

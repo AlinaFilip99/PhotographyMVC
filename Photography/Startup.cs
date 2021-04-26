@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Photography.ApplicationLogic.Services;
+using Photography.ApplicationLogic.Abstractions;
 
 namespace Photography
 {
@@ -31,6 +32,7 @@ namespace Photography
             var connection = @"Server=(localdb)\mssqllocaldb;Database=TestEntityFrameworkDb;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<PhotographyContext>
                 (options => options.UseSqlServer(connection));
+            services.AddScoped<IAccountRepository, EFAccountRepository>();
             services.AddScoped<AccountService>();
         }
 

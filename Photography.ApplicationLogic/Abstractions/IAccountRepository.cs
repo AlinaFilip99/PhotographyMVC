@@ -7,5 +7,6 @@ namespace Photography.ApplicationLogic.Abstractions
 {
     public interface IAccountRepository : IRepository<Account>
     {
+        new IEnumerable<Account> GetAll();
     }
 }
