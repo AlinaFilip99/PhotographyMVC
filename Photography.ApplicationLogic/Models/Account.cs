@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace Photography.ApplicationLogic.Models
 {
-    public class Account
+    public class Account: DataEntity
     {
-        public int AccountId { get; set; }
         public string Nume { get; set; }
         public string Prenume { get; set; }
         public string Email { get; set; }

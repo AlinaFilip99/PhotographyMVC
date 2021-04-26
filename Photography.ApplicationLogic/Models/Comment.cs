@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace Photography.ApplicationLogic.Models
 {
-    public class Comment
+    public class Comment: DataEntity
     {
-        public int CommentId { get; set; }
         public string CommMessage { get; set; }
         public int PostId { get; set; }
         public Post Post { get; set; }

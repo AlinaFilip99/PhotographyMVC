@@ -1,4 +1,4 @@
-﻿@model Photography.Models.Photo
+﻿@model Photography.ApplicationLogic.Models.Photo
 
 @{
     ViewData["Title"] = "Delete";
@@ -21,12 +21,12 @@
             @Html.DisplayNameFor(model => model.Post)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Post.PostId)
+            @Html.DisplayFor(model => model.Post.Id)
         </dd class>
     </dl>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="PhotoId" />
+        <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>

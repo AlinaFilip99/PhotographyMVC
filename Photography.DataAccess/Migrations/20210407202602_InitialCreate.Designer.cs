@@ -5,9 +5,10 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Photography.Models;
+using Photography.ApplicationLogic.Models;
+using Photography.DataAccess;
 
-namespace Photography.Migrations
+namespace Photography.DataAccess.Migrations
 {
     [DbContext(typeof(PhotographyContext))]
     [Migration("20210407202602_InitialCreate")]

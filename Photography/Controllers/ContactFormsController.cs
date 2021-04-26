@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Photography.Models;
+using Photography.DataAccess;
+using Photography.ApplicationLogic.Models;
 
 namespace Photography.Controllers
 {
@@ -35,7 +36,7 @@ namespace Photography.Controllers
 
             var contactForm = await _context.ContactForms
                 .Include(c => c.Account)
-                .FirstOrDefaultAsync(m => m.ContactFormId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (contactForm == null)
             {
                 return NotFound();
@@ -47,7 +48,7 @@ namespace Photography.Controllers
         // GET: ContactForms/Create
         public IActionResult Create()
         {
-            ViewData["AccountId"] = new SelectList(_context.Accounts, "AccountId", "AccountId");
+            ViewData["AccountId"] = new SelectList(_context.Accounts, "Id", "Id");
             return View();
         }
 
@@ -56,7 +57,7 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ContactFormId,NumeF,PrenumeF,DataF,Message,AccountId")] ContactForm contactForm)
+        public async Task<IActionResult> Create([Bind("Id,NumeF,PrenumeF,DataF,Message,AccountId")] ContactForm contactForm)
         {
             if (ModelState.IsValid)
             {
@@ -64,7 +65,7 @@ namespace Photography.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AccountId"] = new SelectList(_context.Accounts, "AccountId", "AccountId", contactForm.AccountId);
+            ViewData["AccountId"] = new SelectList(_context.Accounts, "Id", "Id", contactForm.AccountId);
             return View(contactForm);
         }
 
@@ -81,7 +82,7 @@ namespace Photography.Controllers
             {
                 return NotFound();
             }
-            ViewData["AccountId"] = new SelectList(_context.Accounts, "AccountId", "AccountId", contactForm.AccountId);
+            ViewData["AccountId"] = new SelectList(_context.Accounts, "Id", "Id", contactForm.AccountId);
             return View(contactForm);
         }
 
@@ -90,9 +91,9 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ContactFormId,NumeF,PrenumeF,DataF,Message,AccountId")] ContactForm contactForm)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,NumeF,PrenumeF,DataF,Message,AccountId")] ContactForm contactForm)
         {
-            if (id != contactForm.ContactFormId)
+            if (id != contactForm.Id)
             {
                 return NotFound();
             }
@@ -106,7 +107,7 @@ namespace Photography.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ContactFormExists(contactForm.ContactFormId))
+                    if (!ContactFormExists(contactForm.Id))
                     {
                         return NotFound();
                     }
@@ -117,7 +118,7 @@ namespace Photography.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AccountId"] = new SelectList(_context.Accounts, "AccountId", "AccountId", contactForm.AccountId);
+            ViewData["AccountId"] = new SelectList(_context.Accounts, "Id", "Id", contactForm.AccountId);
             return View(contactForm);
         }
 
@@ -131,7 +132,7 @@ namespace Photography.Controllers
 
             var contactForm = await _context.ContactForms
                 .Include(c => c.Account)
-                .FirstOrDefaultAsync(m => m.ContactFormId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (contactForm == null)
             {
                 return NotFound();
@@ -153,7 +154,7 @@ namespace Photography.Controllers
 
         private bool ContactFormExists(int id)
         {
-            return _context.ContactForms.Any(e => e.ContactFormId == id);
+            return _context.ContactForms.Any(e => e.Id == id);
         }
     }
 }

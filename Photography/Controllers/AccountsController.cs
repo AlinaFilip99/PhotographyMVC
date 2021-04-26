@@ -5,24 +5,28 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Photography.Models;
+using Photography.DataAccess;
+using Photography.ApplicationLogic.Models;
+using Photography.ApplicationLogic.Services;
 
 namespace Photography.Controllers
 {
     public class AccountsController : Controller
     {
         private readonly PhotographyContext _context;
+        private readonly AccountService accountService;
 
-        public AccountsController(PhotographyContext context)
+        public AccountsController(AccountService AccountService, PhotographyContext context)
         {
             _context = context;
+            this.accountService = AccountService;
         }
 
         // GET: Accounts
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var photographyContext = _context.Accounts.Include(a => a.Role);
-            return View(await photographyContext.ToListAsync());
+            var accounts = accountService.GetAccounts();
+            return View(accounts);
         }
 
         // GET: Accounts/Details/5
@@ -35,7 +39,7 @@ namespace Photography.Controllers
 
             var account = await _context.Accounts
                 .Include(a => a.Role)
-                .FirstOrDefaultAsync(m => m.AccountId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (account == null)
             {
                 return NotFound();
@@ -47,7 +51,7 @@ namespace Photography.Controllers
         // GET: Accounts/Create
         public IActionResult Create()
         {
-            ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId");
+            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id");
             return View();
         }
 
@@ -56,7 +60,7 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AccountId,Nume,Prenume,Email,Phone,Password,ProfilePicture,FacebookLink,InstagramLink,TwitterLink,RoleId")] Account account)
+        public async Task<IActionResult> Create([Bind("Id,Nume,Prenume,Email,Phone,Password,ProfilePicture,FacebookLink,InstagramLink,TwitterLink,RoleId")] Account account)
         {
             if (ModelState.IsValid)
             {
@@ -64,7 +68,7 @@ namespace Photography.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId", account.RoleId);
+            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id", account.RoleId);
             return View(account);
         }
 
@@ -81,7 +85,7 @@ namespace Photography.Controllers
             {
                 return NotFound();
             }
-            ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId", account.RoleId);
+            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id", account.RoleId);
             return View(account);
         }
 
@@ -90,9 +94,9 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AccountId,Nume,Prenume,Email,Phone,Password,ProfilePicture,FacebookLink,InstagramLink,TwitterLink,RoleId")] Account account)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nume,Prenume,Email,Phone,Password,ProfilePicture,FacebookLink,InstagramLink,TwitterLink,RoleId")] Account account)
         {
-            if (id != account.AccountId)
+            if (id != account.Id)
             {
                 return NotFound();
             }
@@ -106,7 +110,7 @@ namespace Photography.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AccountExists(account.AccountId))
+                    if (!AccountExists(account.Id))
                     {
                         return NotFound();
                     }
@@ -117,7 +121,7 @@ namespace Photography.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId", account.RoleId);
+            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id", account.RoleId);
             return View(account);
         }
 
@@ -131,7 +135,7 @@ namespace Photography.Controllers
 
             var account = await _context.Accounts
                 .Include(a => a.Role)
-                .FirstOrDefaultAsync(m => m.AccountId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (account == null)
             {
                 return NotFound();
@@ -153,7 +157,7 @@ namespace Photography.Controllers
 
         private bool AccountExists(int id)
         {
-            return _context.Accounts.Any(e => e.AccountId == id);
+            return _context.Accounts.Any(e => e.Id == id);
         }
     }
 }

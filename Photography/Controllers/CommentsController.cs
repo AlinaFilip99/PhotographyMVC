@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Photography.Models;
+using Photography.DataAccess;
+using Photography.ApplicationLogic.Models;
 
 namespace Photography.Controllers
 {
@@ -35,7 +36,7 @@ namespace Photography.Controllers
 
             var comment = await _context.Comments
                 .Include(c => c.Post)
-                .FirstOrDefaultAsync(m => m.CommentId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (comment == null)
             {
                 return NotFound();
@@ -47,7 +48,7 @@ namespace Photography.Controllers
         // GET: Comments/Create
         public IActionResult Create()
         {
-            ViewData["PostId"] = new SelectList(_context.Posts, "PostId", "PostId");
+            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id");
             return View();
         }
 
@@ -56,7 +57,7 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CommentId,CommMessage,PostId")] Comment comment)
+        public async Task<IActionResult> Create([Bind("Id,CommMessage,PostId")] Comment comment)
         {
             if (ModelState.IsValid)
             {
@@ -64,7 +65,7 @@ namespace Photography.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PostId"] = new SelectList(_context.Posts, "PostId", "PostId", comment.PostId);
+            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id", comment.PostId);
             return View(comment);
         }
 
@@ -81,7 +82,7 @@ namespace Photography.Controllers
             {
                 return NotFound();
             }
-            ViewData["PostId"] = new SelectList(_context.Posts, "PostId", "PostId", comment.PostId);
+            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id", comment.PostId);
             return View(comment);
         }
 
@@ -90,9 +91,9 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CommentId,CommMessage,PostId")] Comment comment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CommMessage,PostId")] Comment comment)
         {
-            if (id != comment.CommentId)
+            if (id != comment.Id)
             {
                 return NotFound();
             }
@@ -106,7 +107,7 @@ namespace Photography.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CommentExists(comment.CommentId))
+                    if (!CommentExists(comment.Id))
                     {
                         return NotFound();
                     }
@@ -117,7 +118,7 @@ namespace Photography.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PostId"] = new SelectList(_context.Posts, "PostId", "PostId", comment.PostId);
+            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id", comment.PostId);
             return View(comment);
         }
 
@@ -131,7 +132,7 @@ namespace Photography.Controllers
 
             var comment = await _context.Comments
                 .Include(c => c.Post)
-                .FirstOrDefaultAsync(m => m.CommentId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (comment == null)
             {
                 return NotFound();
@@ -153,7 +154,7 @@ namespace Photography.Controllers
 
         private bool CommentExists(int id)
         {
-            return _context.Comments.Any(e => e.CommentId == id);
+            return _context.Comments.Any(e => e.Id == id);
         }
     }
 }

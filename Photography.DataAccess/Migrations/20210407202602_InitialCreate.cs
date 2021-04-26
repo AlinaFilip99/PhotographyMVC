@@ -11,20 +11,20 @@ namespace Photography.DataAccess.Migrations
                 name: "Roles",
                 columns: table => new
                 {
-                    RoleId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RoleType = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Roles", x => x.RoleId);
+                    table.PrimaryKey("PK_Roles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Accounts",
                 columns: table => new
                 {
-                    AccountId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nume = table.Column<string>(nullable: true),
                     Prenume = table.Column<string>(nullable: true),
@@ -39,12 +39,12 @@ namespace Photography.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Accounts", x => x.AccountId);
+                    table.PrimaryKey("PK_Accounts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Accounts_Roles_RoleId",
+                        name: "FK_Accounts_Roles_Id",
                         column: x => x.RoleId,
                         principalTable: "Roles",
-                        principalColumn: "RoleId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -52,7 +52,7 @@ namespace Photography.DataAccess.Migrations
                 name: "ContactForms",
                 columns: table => new
                 {
-                    ContactFormId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NumeF = table.Column<string>(nullable: true),
                     PrenumeF = table.Column<string>(nullable: true),
@@ -62,12 +62,12 @@ namespace Photography.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ContactForms", x => x.ContactFormId);
+                    table.PrimaryKey("PK_ContactForms", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ContactForms_Accounts_AccountId",
+                        name: "FK_ContactForms_Accounts_Id",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
-                        principalColumn: "AccountId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -75,7 +75,7 @@ namespace Photography.DataAccess.Migrations
                 name: "Posts",
                 columns: table => new
                 {
-                    PostId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Description = table.Column<string>(nullable: true),
                     Likes = table.Column<int>(nullable: false),
@@ -83,12 +83,12 @@ namespace Photography.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Posts", x => x.PostId);
+                    table.PrimaryKey("PK_Posts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Posts_Accounts_AccountId",
+                        name: "FK_Posts_Accounts_Id",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
-                        principalColumn: "AccountId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -96,19 +96,19 @@ namespace Photography.DataAccess.Migrations
                 name: "Comments",
                 columns: table => new
                 {
-                    CommentId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CommMessage = table.Column<string>(nullable: true),
                     PostId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Comments", x => x.CommentId);
+                    table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comments_Posts_PostId",
+                        name: "FK_Comments_Posts_Id",
                         column: x => x.PostId,
                         principalTable: "Posts",
-                        principalColumn: "PostId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -116,46 +116,46 @@ namespace Photography.DataAccess.Migrations
                 name: "Photos",
                 columns: table => new
                 {
-                    PhotoId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Picture = table.Column<byte[]>(nullable: true),
                     PostId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Photos", x => x.PhotoId);
+                    table.PrimaryKey("PK_Photos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Photos_Posts_PostId",
+                        name: "FK_Photos_Posts_Id",
                         column: x => x.PostId,
                         principalTable: "Posts",
-                        principalColumn: "PostId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_RoleId",
                 table: "Accounts",
-                column: "RoleId");
+                column: "Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_PostId",
                 table: "Comments",
-                column: "PostId");
+                column: "Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContactForms_AccountId",
                 table: "ContactForms",
-                column: "AccountId");
+                column: "Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Photos_PostId",
                 table: "Photos",
-                column: "PostId");
+                column: "Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_AccountId",
                 table: "Posts",
-                column: "AccountId");
+                column: "Id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

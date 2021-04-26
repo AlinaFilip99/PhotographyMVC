@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace Photography.ApplicationLogic.Models
 {
-    public class ContactForm
+    public class ContactForm : DataEntity
     {
-        public int ContactFormId { get; set; }
         public string NumeF { get; set; }
         public string PrenumeF { get; set; }
         public DateTime DataF { get; set; }

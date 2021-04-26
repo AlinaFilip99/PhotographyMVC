@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Photography.Models;
+using Photography.DataAccess;
+using Photography.ApplicationLogic.Models;
 
 namespace Photography.Controllers
 {
@@ -33,7 +34,7 @@ namespace Photography.Controllers
             }
 
             var role = await _context.Roles
-                .FirstOrDefaultAsync(m => m.RoleId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (role == null)
             {
                 return NotFound();
@@ -53,7 +54,7 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RoleId,RoleType")] Role role)
+        public async Task<IActionResult> Create([Bind("Id,RoleType")] Role role)
         {
             if (ModelState.IsValid)
             {
@@ -85,9 +86,9 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("RoleId,RoleType")] Role role)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,RoleType")] Role role)
         {
-            if (id != role.RoleId)
+            if (id != role.Id)
             {
                 return NotFound();
             }
@@ -101,7 +102,7 @@ namespace Photography.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RoleExists(role.RoleId))
+                    if (!RoleExists(role.Id))
                     {
                         return NotFound();
                     }
@@ -124,7 +125,7 @@ namespace Photography.Controllers
             }
 
             var role = await _context.Roles
-                .FirstOrDefaultAsync(m => m.RoleId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (role == null)
             {
                 return NotFound();
@@ -146,7 +147,7 @@ namespace Photography.Controllers
 
         private bool RoleExists(int id)
         {
-            return _context.Roles.Any(e => e.RoleId == id);
+            return _context.Roles.Any(e => e.Id == id);
         }
     }
 }

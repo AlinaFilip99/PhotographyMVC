@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Photography.Models;
+using Photography.DataAccess;
+using Photography.ApplicationLogic.Models;
 
 namespace Photography.Controllers
 {
@@ -35,7 +36,7 @@ namespace Photography.Controllers
 
             var post = await _context.Posts
                 .Include(p => p.Account)
-                .FirstOrDefaultAsync(m => m.PostId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null)
             {
                 return NotFound();
@@ -47,7 +48,7 @@ namespace Photography.Controllers
         // GET: Posts/Create
         public IActionResult Create()
         {
-            ViewData["AccountId"] = new SelectList(_context.Accounts, "AccountId", "AccountId");
+            ViewData["AccountId"] = new SelectList(_context.Accounts, "Id", "Id");
             return View();
         }
 
@@ -56,7 +57,7 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PostId,Description,Likes,AccountId")] Post post)
+        public async Task<IActionResult> Create([Bind("Id,Description,Likes,AccountId")] Post post)
         {
             if (ModelState.IsValid)
             {
@@ -64,7 +65,7 @@ namespace Photography.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AccountId"] = new SelectList(_context.Accounts, "AccountId", "AccountId", post.AccountId);
+            ViewData["AccountId"] = new SelectList(_context.Accounts, "Id", "Id", post.AccountId);
             return View(post);
         }
 
@@ -81,7 +82,7 @@ namespace Photography.Controllers
             {
                 return NotFound();
             }
-            ViewData["AccountId"] = new SelectList(_context.Accounts, "AccountId", "AccountId", post.AccountId);
+            ViewData["AccountId"] = new SelectList(_context.Accounts, "Id", "Id", post.AccountId);
             return View(post);
         }
 
@@ -90,9 +91,9 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PostId,Description,Likes,AccountId")] Post post)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Description,Likes,AccountId")] Post post)
         {
-            if (id != post.PostId)
+            if (id != post.Id)
             {
                 return NotFound();
             }
@@ -106,7 +107,7 @@ namespace Photography.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PostExists(post.PostId))
+                    if (!PostExists(post.Id))
                     {
                         return NotFound();
                     }
@@ -117,7 +118,7 @@ namespace Photography.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AccountId"] = new SelectList(_context.Accounts, "AccountId", "AccountId", post.AccountId);
+            ViewData["AccountId"] = new SelectList(_context.Accounts, "Id", "Id", post.AccountId);
             return View(post);
         }
 
@@ -131,7 +132,7 @@ namespace Photography.Controllers
 
             var post = await _context.Posts
                 .Include(p => p.Account)
-                .FirstOrDefaultAsync(m => m.PostId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null)
             {
                 return NotFound();
@@ -153,7 +154,7 @@ namespace Photography.Controllers
 
         private bool PostExists(int id)
         {
-            return _context.Posts.Any(e => e.PostId == id);
+            return _context.Posts.Any(e => e.Id == id);
         }
     }
 }

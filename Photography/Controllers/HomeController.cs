@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Photography.Models;
+using Photography.DataAccess;
+using Photography.ApplicationLogic.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Photography.Models.Post>
+﻿@model IEnumerable<Photography.ApplicationLogic.Models.Post>
 
 @{
     ViewData["Title"] = "Index";
@@ -34,12 +34,12 @@
                 @Html.DisplayFor(modelItem => item.Likes)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Account.AccountId)
+                @Html.DisplayFor(modelItem => item.Account.Id)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.PostId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PostId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.PostId">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
 }

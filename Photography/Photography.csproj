@@ -14,4 +14,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Photography.ApplicationLogic\Photography.ApplicationLogic.csproj" />
+    <ProjectReference Include="..\Photography.DataAccess\Photography.DataAccess.csproj" />
+  </ItemGroup>
+
 </Project>

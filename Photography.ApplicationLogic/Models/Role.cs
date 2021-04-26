@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace Photography.ApplicationLogic.Models
 {
-    public class Role
+    public class Role : DataEntity
     {
-        public int RoleId { get; set; }
         public string RoleType { get; set; }
         public ICollection<Account> Accounts { get; set; }
     }

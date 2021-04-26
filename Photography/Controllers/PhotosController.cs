@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Photography.Models;
+using Photography.DataAccess;
+using Photography.ApplicationLogic.Models;
 
 namespace Photography.Controllers
 {
@@ -35,7 +36,7 @@ namespace Photography.Controllers
 
             var photo = await _context.Photos
                 .Include(p => p.Post)
-                .FirstOrDefaultAsync(m => m.PhotoId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (photo == null)
             {
                 return NotFound();
@@ -47,7 +48,7 @@ namespace Photography.Controllers
         // GET: Photos/Create
         public IActionResult Create()
         {
-            ViewData["PostId"] = new SelectList(_context.Posts, "PostId", "PostId");
+            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id");
             return View();
         }
 
@@ -56,7 +57,7 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PhotoId,Picture,PostId")] Photo photo)
+        public async Task<IActionResult> Create([Bind("Id,Picture,PostId")] Photo photo)
         {
             if (ModelState.IsValid)
             {
@@ -64,7 +65,7 @@ namespace Photography.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PostId"] = new SelectList(_context.Posts, "PostId", "PostId", photo.PostId);
+            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id", photo.PostId);
             return View(photo);
         }
 
@@ -81,7 +82,7 @@ namespace Photography.Controllers
             {
                 return NotFound();
             }
-            ViewData["PostId"] = new SelectList(_context.Posts, "PostId", "PostId", photo.PostId);
+            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id", photo.PostId);
             return View(photo);
         }
 
@@ -90,9 +91,9 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PhotoId,Picture,PostId")] Photo photo)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Picture,PostId")] Photo photo)
         {
-            if (id != photo.PhotoId)
+            if (id != photo.Id)
             {
                 return NotFound();
             }
@@ -106,7 +107,7 @@ namespace Photography.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PhotoExists(photo.PhotoId))
+                    if (!PhotoExists(photo.Id))
                     {
                         return NotFound();
                     }
@@ -117,7 +118,7 @@ namespace Photography.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PostId"] = new SelectList(_context.Posts, "PostId", "PostId", photo.PostId);
+            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id", photo.PostId);
             return View(photo);
         }
 
@@ -131,7 +132,7 @@ namespace Photography.Controllers
 
             var photo = await _context.Photos
                 .Include(p => p.Post)
-                .FirstOrDefaultAsync(m => m.PhotoId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (photo == null)
             {
                 return NotFound();
@@ -153,7 +154,7 @@ namespace Photography.Controllers
 
         private bool PhotoExists(int id)
         {
-            return _context.Photos.Any(e => e.PhotoId == id);
+            return _context.Photos.Any(e => e.Id == id);
         }
     }
 }
