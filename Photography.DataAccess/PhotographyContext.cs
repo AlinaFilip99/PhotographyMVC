@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace Photography.Models
+namespace Photography.DataAccess
 {
     public class PhotographyContext : DbContext
     {

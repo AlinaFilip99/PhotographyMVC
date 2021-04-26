@@ -1,6 +1,6 @@
 using System;
 
-namespace Photography.Models
+namespace Photography.ApplicationLogic.Models
 {
     public class ErrorViewModel
     {
