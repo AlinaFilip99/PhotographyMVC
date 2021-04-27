@@ -31,7 +31,7 @@ namespace Photography
 
             var connection = @"Server=(localdb)\mssqllocaldb;Database=TestEntityFrameworkDb;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<PhotographyContext>
-                (options => options.UseSqlServer(connection));
+                (options => options.UseSqlServer(connection, b =>b.MigrationsAssembly("Photography.ApplicationLogic")));
             services.AddScoped<IAccountRepository, EFAccountRepository>();
             services.AddScoped<AccountService>();
         }

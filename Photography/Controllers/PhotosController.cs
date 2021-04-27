@@ -7,16 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Photography.DataAccess;
 using Photography.ApplicationLogic.Models;
+using Photography.ViewModels;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Photography.Controllers
 {
     public class PhotosController : Controller
     {
         private readonly PhotographyContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public PhotosController(PhotographyContext context)
+        public PhotosController(PhotographyContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Photos
@@ -57,16 +62,25 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Picture,PostId")] Photo photo)
+        public async Task<IActionResult> Create( PhotoViewModel photoViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(photo);
+                string fileName = Path.GetFileNameWithoutExtension(photoViewModel.PictureFile.FileName);
+                string extension = Path.GetExtension(photoViewModel.PictureFile.FileName);
+                fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+                photoViewModel.photo.Picture = "~/Image/" + fileName;
+                fileName = Path.Combine(_webHostEnvironment.ContentRootPath, "Image", fileName);
+                using (Stream fileStream = new FileStream(fileName, FileMode.Create))
+                {
+                    await photoViewModel.PictureFile.CopyToAsync(fileStream);
+                }
+                _context.Add(photoViewModel.photo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id", photo.PostId);
-            return View(photo);
+            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id", photoViewModel.photo.PostId);
+            return View(photoViewModel.photo);
         }
 
         // GET: Photos/Edit/5
