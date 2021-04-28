@@ -1,14 +1,10 @@
 ﻿@model IEnumerable<Photography.ApplicationLogic.Models.Post>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Posts";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<h1>Posts</h1>
 <table class="table">
     <thead>
         <tr>
@@ -34,10 +30,6 @@
                 @Html.DisplayFor(modelItem => item.Likes)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Account.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
@@ -45,3 +37,6 @@
 }
     </tbody>
 </table>
+<div>
+    <a asp-action="Index" asp-controller="Accounts">Back to Accounts</a>
+</div>

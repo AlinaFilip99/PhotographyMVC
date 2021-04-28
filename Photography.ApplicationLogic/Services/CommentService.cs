@@ -39,5 +39,9 @@ namespace Photography.ApplicationLogic.Services
         {
             return commentRepository.Exists(id);
         }
+        public IEnumerable<Comment> GetCommentByPostId(int id)
+        {
+            return commentRepository.GetByPost(id);
+        }
     }
 }

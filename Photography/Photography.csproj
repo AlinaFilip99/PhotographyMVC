@@ -13,6 +13,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
+    <PackageReference Include="PagedList.Mvc" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,12 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Image\" />
-    <Folder Include="wwwroot\Images\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <None Include="wwwroot\Images\falls2215348505.jpg" />
     <None Include="wwwroot\Images\logo.png" />
+    <None Include="wwwroot\Images\rocks213921389.jpg" />
+    <None Include="wwwroot\Images\unnamed211102718.png" />
   </ItemGroup>
 
 </Project>

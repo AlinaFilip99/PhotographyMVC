@@ -51,5 +51,10 @@ namespace Photography.DataAccess
         {
             return dbContext.ContactForms.Any(e => e.Id == id);
         }
+        public IEnumerable<ContactForm> GetByName (string searchString)
+        {
+            return dbContext.ContactForms.Where(s => s.NumeF.Contains(searchString)
+                                       || s.PrenumeF.Contains(searchString)).AsEnumerable();
+        }
     }
 }

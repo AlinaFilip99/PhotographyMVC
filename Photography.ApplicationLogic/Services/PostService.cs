@@ -39,5 +39,9 @@ namespace Photography.ApplicationLogic.Services
         {
             return postRepository.Exists(id);
         }
+        public IEnumerable<Post> GetPostByUserId(int id)
+        {
+            return postRepository.GetByUser(id);
+        }
     }
 }

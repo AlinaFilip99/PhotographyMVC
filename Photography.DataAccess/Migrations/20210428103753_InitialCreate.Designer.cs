@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Photography.DataAccess;
 
-namespace Photography.ApplicationLogic.Migrations
+namespace Photography.DataAccess.Migrations
 {
     [DbContext(typeof(PhotographyContext))]
     [Migration("20210428103753_InitialCreate")]

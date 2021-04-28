@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Photography.ApplicationLogic.Migrations
+namespace Photography.DataAccess.Migrations
 {
     public partial class InitialCreate : Migration
     {

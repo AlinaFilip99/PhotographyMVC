@@ -13,5 +13,6 @@ namespace Photography.ApplicationLogic.Abstractions
         new Account Update(Account accountUpdate);
         new bool Remove(int id);
         bool Exists(int id);
+        IEnumerable<Account> GetByName(string searchString);
     }
 }

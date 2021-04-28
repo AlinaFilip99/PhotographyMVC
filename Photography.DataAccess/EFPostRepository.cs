@@ -51,5 +51,9 @@ namespace Photography.DataAccess
         {
             return dbContext.Posts.Any(e => e.Id == id);
         }
+        public IEnumerable<Post> GetByUser(int id)
+        {
+            return dbContext.Posts.Where(entity => entity.AccountId.Equals(id)).AsEnumerable();
+        }
     }
 }

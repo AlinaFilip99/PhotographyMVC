@@ -13,5 +13,6 @@ namespace Photography.ApplicationLogic.Abstractions
         new Post Update(Post postUpdate);
         new bool Remove(int id);
         bool Exists(int id);
+        IEnumerable<Post> GetByUser(int id);
     }
 }

@@ -52,5 +52,10 @@ namespace Photography.DataAccess
         {
             return dbContext.Accounts.Any(e => e.Id == id);
         }
+        public IEnumerable<Account> GetByName(string searchString)
+        {
+            return dbContext.Accounts.Where(s => s.Nume.Contains(searchString)
+                                       || s.Prenume.Contains(searchString));
+        }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Photography.DataAccess;
 using Photography.ApplicationLogic.Models;
 using Photography.ApplicationLogic.Services;
+using Photography.ViewModels;
 
 namespace Photography.Controllers
 {
@@ -24,9 +25,23 @@ namespace Photography.Controllers
         }
 
         // GET: ContactForms
-        public IActionResult Index()
+        public IActionResult Index(string sortOrder, string searchString)
         {
+            ViewBag.DateSortParm = String.IsNullOrEmpty(sortOrder) ? "date_desc" : "";
             var contacts = contactService.GetContactForms();
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                contacts = contactService.GetContactsByName(searchString);
+            }
+            switch (sortOrder)
+            {
+                case "date_desc":
+                    contacts = contacts.OrderByDescending(s => s.DataF);
+                    break;
+                default:
+                    contacts = contacts.OrderBy(s => s.DataF);
+                    break;
+            }
             return View(contacts);
         }
 
@@ -35,12 +50,18 @@ namespace Photography.Controllers
         {
 
             var contactForm = contactService.GetContactFormById(id);
+            var account = accountService.GetAccountById(contactForm.AccountId);
+
             if (contactForm == null)
             {
                 return NotFound();
             }
-
-            return View(contactForm);
+            var formAccountViewModel = new FormAccountViewModel
+            {
+                contact = contactForm,
+                account = account
+            };
+            return View(formAccountViewModel);
         }
 
         // GET: ContactForms/Create

@@ -39,5 +39,9 @@ namespace Photography.ApplicationLogic.Services
         {
             return accountRepository.Exists(id);
         }
+        public IEnumerable<Account> GetAccountsByName(string searchString)
+        {
+            return accountRepository.GetByName(searchString);
+        }
     }
 }

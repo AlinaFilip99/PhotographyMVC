@@ -13,5 +13,6 @@ namespace Photography.ApplicationLogic.Abstractions
         new ContactForm Update(ContactForm contactformUpdate);
         new bool Remove(int id);
         bool Exists(int id);
+        IEnumerable<ContactForm> GetByName(string searchString);
     }
 }

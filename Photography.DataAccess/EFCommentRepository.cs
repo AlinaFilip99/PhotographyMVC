@@ -51,5 +51,9 @@ namespace Photography.DataAccess
         {
             return dbContext.Comments.Any(e => e.Id == id);
         }
+        public IEnumerable<Comment> GetByPost(int id)
+        {
+            return dbContext.Comments.Where(entity => entity.PostId.Equals(id)).AsEnumerable();
+        }
     }
 }

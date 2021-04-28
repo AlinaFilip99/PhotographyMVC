@@ -39,5 +39,9 @@ namespace Photography.ApplicationLogic.Services
         {
             return contactRepository.Exists(id);
         }
+        public IEnumerable<ContactForm> GetContactsByName(string searchString)
+        {
+            return contactRepository.GetByName(searchString);
+        }
     }
 }

@@ -65,8 +65,8 @@ namespace Photography.Controllers
                 string fileName = Path.GetFileNameWithoutExtension(photoViewModel.PictureFile.FileName);
                 string extension = Path.GetExtension(photoViewModel.PictureFile.FileName);
                 fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
-                photoViewModel.photo.Picture = "~/Image/" + fileName;
-                fileName = Path.Combine(_webHostEnvironment.ContentRootPath, "Image", fileName);
+                photoViewModel.photo.Picture = "~/Images/" + fileName;
+                fileName = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\Images", fileName);
                 using (Stream fileStream = new FileStream(fileName, FileMode.Create))
                 {
                     await photoViewModel.PictureFile.CopyToAsync(fileStream);
@@ -86,8 +86,12 @@ namespace Photography.Controllers
             {
                 return NotFound();
             }
+            var photoview = new PhotoViewModel
+            {
+                photo = photo
+            };
             ViewData["PostId"] = new SelectList(postService.GetPosts(), "Id", "Id", photo.PostId);
-            return View(photo);
+            return View(photoview);
         }
 
         // POST: Photos/Edit/5
@@ -109,8 +113,8 @@ namespace Photography.Controllers
                     string fileName = Path.GetFileNameWithoutExtension(photoViewModel.PictureFile.FileName);
                     string extension = Path.GetExtension(photoViewModel.PictureFile.FileName);
                     fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
-                    photoViewModel.photo.Picture = "~/Image/" + fileName;
-                    fileName = Path.Combine(_webHostEnvironment.ContentRootPath, "Image", fileName);
+                    photoViewModel.photo.Picture = "~/Images/" + fileName;
+                    fileName = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\Images", fileName);
                     using (Stream fileStream = new FileStream(fileName, FileMode.Create))
                     {
                         await photoViewModel.PictureFile.CopyToAsync(fileStream);
@@ -131,7 +135,7 @@ namespace Photography.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["PostId"] = new SelectList(postService.GetPosts(), "Id", "Id", photoViewModel.photo.PostId);
-            return View(photoViewModel.photo);
+            return View(photoViewModel);
         }
 
         // GET: Photos/Delete/5

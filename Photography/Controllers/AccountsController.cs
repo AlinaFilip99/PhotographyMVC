@@ -11,6 +11,7 @@ using Photography.ApplicationLogic.Services;
 using Photography.ViewModels;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using PagedList;
 
 namespace Photography.Controllers
 {
@@ -30,9 +31,34 @@ namespace Photography.Controllers
         }
 
         // GET: Accounts
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Index(string sortOrder, string searchString)
         {
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.PrenumeSortParm = sortOrder == "pre_asc" ? "pre_desc" : "pre_asc";
+
             var accounts = accountService.GetAccounts();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                accounts = accountService.GetAccountsByName(searchString);
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    accounts = accounts.OrderByDescending(s => s.Nume);
+                    break;
+                case "pre_asc":
+                    accounts = accounts.OrderBy(s => s.Prenume);
+                    break;
+                case "pre_desc":
+                    accounts = accounts.OrderByDescending(s => s.Prenume);
+                    break;
+                default:
+                    accounts = accounts.OrderBy(s => s.Nume);
+                    break;
+            }
             return View(accounts);
         }
         
@@ -68,8 +94,8 @@ namespace Photography.Controllers
                 string fileName = Path.GetFileNameWithoutExtension(accountViewModel.ProfilePictureFile.FileName);
                 string extension = Path.GetExtension(accountViewModel.ProfilePictureFile.FileName);
                 fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
-                accountViewModel.account.ProfilePicture = "~/Image/" + fileName;
-                fileName = Path.Combine(_webHostEnvironment.ContentRootPath, "Image", fileName);
+                accountViewModel.account.ProfilePicture = "~/Images/" + fileName;
+                fileName = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\Images", fileName);
                 using (Stream fileStream = new FileStream(fileName, FileMode.Create))
                 {
                     await accountViewModel.ProfilePictureFile.CopyToAsync(fileStream);
@@ -113,8 +139,8 @@ namespace Photography.Controllers
                     string fileName = Path.GetFileNameWithoutExtension(accountViewModel.ProfilePictureFile.FileName);
                     string extension = Path.GetExtension(accountViewModel.ProfilePictureFile.FileName);
                     fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
-                    accountViewModel.account.ProfilePicture = "~/Image/" + fileName;
-                    fileName = Path.Combine(_webHostEnvironment.ContentRootPath, "Image", fileName);
+                    accountViewModel.account.ProfilePicture = "~/Images/" + fileName;
+                    fileName = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\Images", fileName);
                     using (Stream fileStream = new FileStream(fileName, FileMode.Create))
                     {
                         await accountViewModel.ProfilePictureFile.CopyToAsync(fileStream);

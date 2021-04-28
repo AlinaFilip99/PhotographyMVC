@@ -1,4 +1,4 @@
-﻿@model Photography.ApplicationLogic.Models.ContactForm
+﻿@model Photography.ViewModels.FormAccountViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -7,42 +7,41 @@
 <h1>Details</h1>
 
 <div>
-    <h4>ContactForm</h4>
+    <h4>Form:</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumeF)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.contact.PrenumeF)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumeF)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.contact.PrenumeF)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PrenumeF)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.contact.NumeF)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PrenumeF)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.contact.NumeF)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataF)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.contact.DataF)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataF)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.contact.DataF)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Message)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.contact.Message)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Message)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.contact.Message)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Account)
+        <dt class="col-sm-2">
+            Email
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Account.Id)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.account.Email)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Back to Forms</a>
 </div>

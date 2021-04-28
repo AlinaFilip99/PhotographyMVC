@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Photography.DataAccess;
 using Photography.ApplicationLogic.Models;
 using Photography.ApplicationLogic.Services;
+using Photography.ViewModels;
 
 namespace Photography.Controllers
 {
@@ -15,17 +16,27 @@ namespace Photography.Controllers
     {
         private readonly PostService postService;
         private readonly AccountService accountService;
+        private readonly PhotoService photoService;
+        private readonly CommentService commentService;
 
-        public PostsController(PostService postService, AccountService accountService)
+        public PostsController(PostService postService, AccountService accountService, PhotoService photoService, CommentService commentService)
         {
             this.postService = postService;
             this.accountService = accountService;
+            this.photoService = photoService;
+            this.commentService = commentService;
         }
-
+        /*
         // GET: Posts
         public IActionResult Index()
         {
             var posts = postService.GetPosts();
+            return View(posts);
+        }
+        */
+        public IActionResult Index(int id)
+        {
+            var posts = postService.GetPostByUserId(id);
             return View(posts);
         }
 
@@ -33,12 +44,19 @@ namespace Photography.Controllers
         public IActionResult Details(int id)
         {
             var post = postService.GetPostById(id);
+            var photos = photoService.GetPhotoByPostId(id);
+            var comments = commentService.GetCommentByPostId(id);
             if (post == null)
             {
                 return NotFound();
             }
-
-            return View(post);
+            var PPCViewModel = new PostPhotosCommentsViewModel
+            {
+                post = post,
+                photos = photos,
+                comments = comments
+            };
+            return View(PPCViewModel);
         }
 
         // GET: Posts/Create
