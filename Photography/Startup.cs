@@ -34,6 +34,21 @@ namespace Photography
                 (options => options.UseSqlServer(connection, b =>b.MigrationsAssembly("Photography.ApplicationLogic")));
             services.AddScoped<IAccountRepository, EFAccountRepository>();
             services.AddScoped<AccountService>();
+
+            services.AddScoped<ICommentRepository, EFCommentRepository>();
+            services.AddScoped<CommentService>();
+
+            services.AddScoped<IContactFormRepository, EFContactFormRepository>();
+            services.AddScoped<ContactFormService>();
+
+            services.AddScoped<IPhotoRepository, EFPhotoRepository>();
+            services.AddScoped<PhotoService>();
+
+            services.AddScoped<IPostRepository, EFPostRepository>();
+            services.AddScoped<PostService>();
+
+            services.AddScoped<IRoleRepository, EFRoleRepository>();
+            services.AddScoped<RoleService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
