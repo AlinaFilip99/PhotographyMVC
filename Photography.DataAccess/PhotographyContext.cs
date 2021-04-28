@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Photography.ApplicationLogic.Models;
 
 namespace Photography.DataAccess
 {
-    public class PhotographyContext : DbContext
+    public class PhotographyContext : IdentityDbContext<IdentityUser>
     {
         public PhotographyContext(DbContextOptions<PhotographyContext> options)
             : base(options)

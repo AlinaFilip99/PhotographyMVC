@@ -11,7 +11,6 @@ using Photography.ApplicationLogic.Services;
 using Photography.ViewModels;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
-using PagedList;
 
 namespace Photography.Controllers
 {

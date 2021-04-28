@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Photography.ApplicationLogic.Services;
 using Photography.ApplicationLogic.Abstractions;
+using Microsoft.AspNetCore.Identity;
 
 namespace Photography
 {
@@ -28,10 +29,15 @@ namespace Photography
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddRazorPages();
+
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<PhotographyContext>();
 
             var connection = @"Server=(localdb)\mssqllocaldb;Database=TestEntityFrameworkDb;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<PhotographyContext>
                 (options => options.UseSqlServer(connection, b =>b.MigrationsAssembly("Photography.ApplicationLogic")));
+
             services.AddScoped<IAccountRepository, EFAccountRepository>();
             services.AddScoped<AccountService>();
 
@@ -69,6 +75,7 @@ namespace Photography
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -76,6 +83,7 @@ namespace Photography
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }
