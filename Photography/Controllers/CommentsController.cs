@@ -6,37 +6,34 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Photography.DataAccess;
+using Photography.ApplicationLogic.Services;
 using Photography.ApplicationLogic.Models;
 
 namespace Photography.Controllers
 {
     public class CommentsController : Controller
     {
-        private readonly PhotographyContext _context;
+        //private readonly PhotographyContext _context;
+        private readonly CommentService commentService;
+        private readonly PostService postService;
 
-        public CommentsController(PhotographyContext context)
+        public CommentsController(CommentService commentService, PostService postService)
         {
-            _context = context;
+            this.commentService = commentService;
+            this.postService = postService;
         }
 
         // GET: Comments
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var photographyContext = _context.Comments.Include(c => c.Post);
-            return View(await photographyContext.ToListAsync());
+            var comments = commentService.GetComments();
+            return View(comments);
         }
 
         // GET: Comments/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var comment = await _context.Comments
-                .Include(c => c.Post)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var comment = commentService.GetCommentById(id);
             if (comment == null)
             {
                 return NotFound();
@@ -48,7 +45,7 @@ namespace Photography.Controllers
         // GET: Comments/Create
         public IActionResult Create()
         {
-            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id");
+            ViewData["PostId"] = new SelectList(postService.GetPosts(), "Id", "Id");
             return View();
         }
 
@@ -57,32 +54,27 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CommMessage,PostId")] Comment comment)
+        public IActionResult Create([Bind("Id,CommMessage,PostId")] Comment comment)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(comment);
-                await _context.SaveChangesAsync();
+                commentService.AddComment(comment);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id", comment.PostId);
+            ViewData["PostId"] = new SelectList(postService.GetPosts(), "Id", "Id", comment.PostId);
             return View(comment);
         }
 
         // GET: Comments/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var comment = await _context.Comments.FindAsync(id);
+            var comment = commentService.GetCommentById(id);
             if (comment == null)
             {
                 return NotFound();
             }
-            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id", comment.PostId);
+            ViewData["PostId"] = new SelectList(postService.GetPosts(), "Id", "Id", comment.PostId);
             return View(comment);
         }
 
@@ -91,7 +83,7 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CommMessage,PostId")] Comment comment)
+        public IActionResult Edit(int id, [Bind("Id,CommMessage,PostId")] Comment comment)
         {
             if (id != comment.Id)
             {
@@ -102,8 +94,7 @@ namespace Photography.Controllers
             {
                 try
                 {
-                    _context.Update(comment);
-                    await _context.SaveChangesAsync();
+                    commentService.UpdateComment(comment);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -118,21 +109,15 @@ namespace Photography.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id", comment.PostId);
+            ViewData["PostId"] = new SelectList(postService.GetPosts(), "Id", "Id", comment.PostId);
             return View(comment);
         }
 
         // GET: Comments/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var comment = await _context.Comments
-                .Include(c => c.Post)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var comment = commentService.GetCommentById(id);
             if (comment == null)
             {
                 return NotFound();
@@ -144,17 +129,15 @@ namespace Photography.Controllers
         // POST: Comments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var comment = await _context.Comments.FindAsync(id);
-            _context.Comments.Remove(comment);
-            await _context.SaveChangesAsync();
+            commentService.RemoveComment(id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool CommentExists(int id)
         {
-            return _context.Comments.Any(e => e.Id == id);
+            return commentService.CheckComment(id);
         }
     }
 }

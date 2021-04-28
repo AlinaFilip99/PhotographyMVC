@@ -19,5 +19,25 @@ namespace Photography.ApplicationLogic.Services
         {
             return accountRepository.GetAll();
         }
+        public Account GetAccountById(int id)
+        {
+            return accountRepository.GetById(id);
+        }
+        public Account AddAccount(Account accountToAdd)
+        {
+            return accountRepository.Add(accountToAdd);
+        }
+        public Account UpdateAccount(Account accountToUpdate)
+        {
+            return accountRepository.Update(accountToUpdate);
+        }
+        public bool RemoveAccount(int id)
+        {
+            return accountRepository.Remove(id);
+        }
+        public bool CheckAccount(int id)
+        {
+            return accountRepository.Exists(id);
+        }
     }
 }

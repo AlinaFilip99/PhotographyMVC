@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Photography.DataAccess.Migrations
+namespace Photography.ApplicationLogic.Migrations
 {
     public partial class InitialCreate : Migration
     {
@@ -31,7 +31,7 @@ namespace Photography.DataAccess.Migrations
                     Email = table.Column<string>(nullable: true),
                     Phone = table.Column<string>(nullable: true),
                     Password = table.Column<string>(nullable: true),
-                    ProfilePicture = table.Column<byte[]>(nullable: true),
+                    ProfilePicture = table.Column<string>(nullable: true),
                     FacebookLink = table.Column<string>(nullable: true),
                     InstagramLink = table.Column<string>(nullable: true),
                     TwitterLink = table.Column<string>(nullable: true),
@@ -41,7 +41,7 @@ namespace Photography.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Accounts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Accounts_Roles_Id",
+                        name: "FK_Accounts_Roles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Roles",
                         principalColumn: "Id",
@@ -64,7 +64,7 @@ namespace Photography.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_ContactForms", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ContactForms_Accounts_Id",
+                        name: "FK_ContactForms_Accounts_AccountId",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
                         principalColumn: "Id",
@@ -85,7 +85,7 @@ namespace Photography.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Posts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Posts_Accounts_Id",
+                        name: "FK_Posts_Accounts_AccountId",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
                         principalColumn: "Id",
@@ -105,7 +105,7 @@ namespace Photography.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comments_Posts_Id",
+                        name: "FK_Comments_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
                         principalColumn: "Id",
@@ -118,14 +118,14 @@ namespace Photography.DataAccess.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Picture = table.Column<byte[]>(nullable: true),
+                    Picture = table.Column<string>(nullable: true),
                     PostId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Photos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Photos_Posts_Id",
+                        name: "FK_Photos_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
                         principalColumn: "Id",
@@ -135,27 +135,27 @@ namespace Photography.DataAccess.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_RoleId",
                 table: "Accounts",
-                column: "Id");
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_PostId",
                 table: "Comments",
-                column: "Id");
+                column: "PostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContactForms_AccountId",
                 table: "ContactForms",
-                column: "Id");
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Photos_PostId",
                 table: "Photos",
-                column: "Id");
+                column: "PostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_AccountId",
                 table: "Posts",
-                column: "Id");
+                column: "AccountId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

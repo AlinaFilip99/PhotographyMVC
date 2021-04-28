@@ -5,26 +5,25 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Photography.ApplicationLogic.Models;
 using Photography.DataAccess;
 
-namespace Photography.DataAccess.Migrations
+namespace Photography.ApplicationLogic.Migrations
 {
     [DbContext(typeof(PhotographyContext))]
-    [Migration("20210407202602_InitialCreate")]
+    [Migration("20210428103753_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.11")
+                .HasAnnotation("ProductVersion", "3.1.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Photography.Models.Account", b =>
+            modelBuilder.Entity("Photography.ApplicationLogic.Models.Account", b =>
                 {
-                    b.Property<int>("AccountId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -50,8 +49,8 @@ namespace Photography.DataAccess.Migrations
                     b.Property<string>("Prenume")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("ProfilePicture")
-                        .HasColumnType("varbinary(max)");
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
@@ -59,16 +58,16 @@ namespace Photography.DataAccess.Migrations
                     b.Property<string>("TwitterLink")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("AccountId");
+                    b.HasKey("Id");
 
                     b.HasIndex("RoleId");
 
                     b.ToTable("Accounts");
                 });
 
-            modelBuilder.Entity("Photography.Models.Comment", b =>
+            modelBuilder.Entity("Photography.ApplicationLogic.Models.Comment", b =>
                 {
-                    b.Property<int>("CommentId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -79,16 +78,16 @@ namespace Photography.DataAccess.Migrations
                     b.Property<int>("PostId")
                         .HasColumnType("int");
 
-                    b.HasKey("CommentId");
+                    b.HasKey("Id");
 
                     b.HasIndex("PostId");
 
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("Photography.Models.ContactForm", b =>
+            modelBuilder.Entity("Photography.ApplicationLogic.Models.ContactForm", b =>
                 {
-                    b.Property<int>("ContactFormId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -108,36 +107,36 @@ namespace Photography.DataAccess.Migrations
                     b.Property<string>("PrenumeF")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ContactFormId");
+                    b.HasKey("Id");
 
                     b.HasIndex("AccountId");
 
                     b.ToTable("ContactForms");
                 });
 
-            modelBuilder.Entity("Photography.Models.Photo", b =>
+            modelBuilder.Entity("Photography.ApplicationLogic.Models.Photo", b =>
                 {
-                    b.Property<int>("PhotoId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<byte[]>("Picture")
-                        .HasColumnType("varbinary(max)");
+                    b.Property<string>("Picture")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PostId")
                         .HasColumnType("int");
 
-                    b.HasKey("PhotoId");
+                    b.HasKey("Id");
 
                     b.HasIndex("PostId");
 
                     b.ToTable("Photos");
                 });
 
-            modelBuilder.Entity("Photography.Models.Post", b =>
+            modelBuilder.Entity("Photography.ApplicationLogic.Models.Post", b =>
                 {
-                    b.Property<int>("PostId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -151,16 +150,16 @@ namespace Photography.DataAccess.Migrations
                     b.Property<int>("Likes")
                         .HasColumnType("int");
 
-                    b.HasKey("PostId");
+                    b.HasKey("Id");
 
                     b.HasIndex("AccountId");
 
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("Photography.Models.Role", b =>
+            modelBuilder.Entity("Photography.ApplicationLogic.Models.Role", b =>
                 {
-                    b.Property<int>("RoleId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -168,50 +167,50 @@ namespace Photography.DataAccess.Migrations
                     b.Property<string>("RoleType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("RoleId");
+                    b.HasKey("Id");
 
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("Photography.Models.Account", b =>
+            modelBuilder.Entity("Photography.ApplicationLogic.Models.Account", b =>
                 {
-                    b.HasOne("Photography.Models.Role", "Role")
+                    b.HasOne("Photography.ApplicationLogic.Models.Role", "Role")
                         .WithMany("Accounts")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Photography.Models.Comment", b =>
+            modelBuilder.Entity("Photography.ApplicationLogic.Models.Comment", b =>
                 {
-                    b.HasOne("Photography.Models.Post", "Post")
+                    b.HasOne("Photography.ApplicationLogic.Models.Post", "Post")
                         .WithMany("Comments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Photography.Models.ContactForm", b =>
+            modelBuilder.Entity("Photography.ApplicationLogic.Models.ContactForm", b =>
                 {
-                    b.HasOne("Photography.Models.Account", "Account")
+                    b.HasOne("Photography.ApplicationLogic.Models.Account", "Account")
                         .WithMany("ContactForms")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Photography.Models.Photo", b =>
+            modelBuilder.Entity("Photography.ApplicationLogic.Models.Photo", b =>
                 {
-                    b.HasOne("Photography.Models.Post", "Post")
+                    b.HasOne("Photography.ApplicationLogic.Models.Post", "Post")
                         .WithMany("Photos")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Photography.Models.Post", b =>
+            modelBuilder.Entity("Photography.ApplicationLogic.Models.Post", b =>
                 {
-                    b.HasOne("Photography.Models.Account", "Account")
+                    b.HasOne("Photography.ApplicationLogic.Models.Account", "Account")
                         .WithMany("Posts")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)

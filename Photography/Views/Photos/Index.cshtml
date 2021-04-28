@@ -25,7 +25,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Picture)
+                <img src="@Url.Content(item.Picture)" style="width: 125px;height: auto;" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Post.Id)

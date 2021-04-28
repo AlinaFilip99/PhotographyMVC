@@ -7,34 +7,30 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Photography.DataAccess;
 using Photography.ApplicationLogic.Models;
+using Photography.ApplicationLogic.Services;
 
 namespace Photography.Controllers
 {
     public class RolesController : Controller
     {
-        private readonly PhotographyContext _context;
+        private readonly RoleService roleService;
 
-        public RolesController(PhotographyContext context)
+        public RolesController(RoleService roleService)
         {
-            _context = context;
+            this.roleService = roleService;
         }
 
         // GET: Roles
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Roles.ToListAsync());
+            var roles = roleService.GetRoles();
+            return View(roles);
         }
 
         // GET: Roles/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var role = await _context.Roles
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var role = roleService.GetRoleById(id);
             if (role == null)
             {
                 return NotFound();
@@ -54,26 +50,20 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RoleType")] Role role)
+        public IActionResult Create([Bind("Id,RoleType")] Role role)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(role);
-                await _context.SaveChangesAsync();
+                roleService.AddRole(role);
                 return RedirectToAction(nameof(Index));
             }
             return View(role);
         }
 
         // GET: Roles/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var role = await _context.Roles.FindAsync(id);
+            var role = roleService.GetRoleById(id);
             if (role == null)
             {
                 return NotFound();
@@ -86,7 +76,7 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,RoleType")] Role role)
+        public IActionResult Edit(int id, [Bind("Id,RoleType")] Role role)
         {
             if (id != role.Id)
             {
@@ -97,8 +87,7 @@ namespace Photography.Controllers
             {
                 try
                 {
-                    _context.Update(role);
-                    await _context.SaveChangesAsync();
+                    roleService.UpdateRole(role);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -117,15 +106,9 @@ namespace Photography.Controllers
         }
 
         // GET: Roles/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var role = await _context.Roles
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var role = roleService.GetRoleById(id);
             if (role == null)
             {
                 return NotFound();
@@ -137,17 +120,15 @@ namespace Photography.Controllers
         // POST: Roles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var role = await _context.Roles.FindAsync(id);
-            _context.Roles.Remove(role);
-            await _context.SaveChangesAsync();
+            roleService.RemoveRole(id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool RoleExists(int id)
         {
-            return _context.Roles.Any(e => e.Id == id);
+            return roleService.CheckRole(id);
         }
     }
 }

@@ -7,36 +7,32 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Photography.DataAccess;
 using Photography.ApplicationLogic.Models;
+using Photography.ApplicationLogic.Services;
 
 namespace Photography.Controllers
 {
     public class PostsController : Controller
     {
-        private readonly PhotographyContext _context;
+        private readonly PostService postService;
+        private readonly AccountService accountService;
 
-        public PostsController(PhotographyContext context)
+        public PostsController(PostService postService, AccountService accountService)
         {
-            _context = context;
+            this.postService = postService;
+            this.accountService = accountService;
         }
 
         // GET: Posts
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var photographyContext = _context.Posts.Include(p => p.Account);
-            return View(await photographyContext.ToListAsync());
+            var posts = postService.GetPosts();
+            return View(posts);
         }
 
         // GET: Posts/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var post = await _context.Posts
-                .Include(p => p.Account)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var post = postService.GetPostById(id);
             if (post == null)
             {
                 return NotFound();
@@ -48,7 +44,7 @@ namespace Photography.Controllers
         // GET: Posts/Create
         public IActionResult Create()
         {
-            ViewData["AccountId"] = new SelectList(_context.Accounts, "Id", "Id");
+            ViewData["AccountId"] = new SelectList(accountService.GetAccounts(), "Id", "Id");
             return View();
         }
 
@@ -57,32 +53,26 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description,Likes,AccountId")] Post post)
+        public IActionResult Create([Bind("Id,Description,Likes,AccountId")] Post post)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(post);
-                await _context.SaveChangesAsync();
+                postService.AddPost(post);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AccountId"] = new SelectList(_context.Accounts, "Id", "Id", post.AccountId);
+            ViewData["AccountId"] = new SelectList(accountService.GetAccounts(), "Id", "Id", post.AccountId);
             return View(post);
         }
 
         // GET: Posts/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var post = await _context.Posts.FindAsync(id);
+            var post = postService.GetPostById(id);
             if (post == null)
             {
                 return NotFound();
             }
-            ViewData["AccountId"] = new SelectList(_context.Accounts, "Id", "Id", post.AccountId);
+            ViewData["AccountId"] = new SelectList(accountService.GetAccounts(), "Id", "Id", post.AccountId);
             return View(post);
         }
 
@@ -91,7 +81,7 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Description,Likes,AccountId")] Post post)
+        public IActionResult Edit(int id, [Bind("Id,Description,Likes,AccountId")] Post post)
         {
             if (id != post.Id)
             {
@@ -102,8 +92,7 @@ namespace Photography.Controllers
             {
                 try
                 {
-                    _context.Update(post);
-                    await _context.SaveChangesAsync();
+                    postService.UpdatePost(post);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -118,21 +107,14 @@ namespace Photography.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AccountId"] = new SelectList(_context.Accounts, "Id", "Id", post.AccountId);
+            ViewData["AccountId"] = new SelectList(accountService.GetAccounts(), "Id", "Id", post.AccountId);
             return View(post);
         }
 
         // GET: Posts/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var post = await _context.Posts
-                .Include(p => p.Account)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var post = postService.GetPostById(id);
             if (post == null)
             {
                 return NotFound();
@@ -144,17 +126,15 @@ namespace Photography.Controllers
         // POST: Posts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var post = await _context.Posts.FindAsync(id);
-            _context.Posts.Remove(post);
-            await _context.SaveChangesAsync();
+            postService.RemovePost(id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool PostExists(int id)
         {
-            return _context.Posts.Any(e => e.Id == id);
+            return postService.CheckPost(id);
         }
     }
 }

@@ -7,36 +7,34 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Photography.DataAccess;
 using Photography.ApplicationLogic.Models;
+using Photography.ApplicationLogic.Services;
 
 namespace Photography.Controllers
 {
     public class ContactFormsController : Controller
     {
-        private readonly PhotographyContext _context;
+        //private readonly PhotographyContext _context;
+        private readonly ContactFormService contactService;
+        private readonly AccountService accountService;
 
-        public ContactFormsController(PhotographyContext context)
+        public ContactFormsController(ContactFormService contactService, AccountService accountService)
         {
-            _context = context;
+            this.contactService = contactService;
+            this.accountService = accountService;
         }
 
         // GET: ContactForms
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var photographyContext = _context.ContactForms.Include(c => c.Account);
-            return View(await photographyContext.ToListAsync());
+            var contacts = contactService.GetContactForms();
+            return View(contacts);
         }
 
         // GET: ContactForms/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var contactForm = await _context.ContactForms
-                .Include(c => c.Account)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var contactForm = contactService.GetContactFormById(id);
             if (contactForm == null)
             {
                 return NotFound();
@@ -48,7 +46,7 @@ namespace Photography.Controllers
         // GET: ContactForms/Create
         public IActionResult Create()
         {
-            ViewData["AccountId"] = new SelectList(_context.Accounts, "Id", "Id");
+            ViewData["AccountId"] = new SelectList(accountService.GetAccounts(), "Id", "Id");
             return View();
         }
 
@@ -57,32 +55,26 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,NumeF,PrenumeF,DataF,Message,AccountId")] ContactForm contactForm)
+        public IActionResult Create([Bind("Id,NumeF,PrenumeF,DataF,Message,AccountId")] ContactForm contactForm)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(contactForm);
-                await _context.SaveChangesAsync();
+                contactService.AddContactForm(contactForm);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AccountId"] = new SelectList(_context.Accounts, "Id", "Id", contactForm.AccountId);
+            ViewData["AccountId"] = new SelectList(accountService.GetAccounts(), "Id", "Id", contactForm.AccountId);
             return View(contactForm);
         }
 
         // GET: ContactForms/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var contactForm = await _context.ContactForms.FindAsync(id);
+            var contactForm = contactService.GetContactFormById(id);
             if (contactForm == null)
             {
                 return NotFound();
             }
-            ViewData["AccountId"] = new SelectList(_context.Accounts, "Id", "Id", contactForm.AccountId);
+            ViewData["AccountId"] = new SelectList(accountService.GetAccounts(), "Id", "Id", contactForm.AccountId);
             return View(contactForm);
         }
 
@@ -91,7 +83,7 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,NumeF,PrenumeF,DataF,Message,AccountId")] ContactForm contactForm)
+        public IActionResult Edit(int id, [Bind("Id,NumeF,PrenumeF,DataF,Message,AccountId")] ContactForm contactForm)
         {
             if (id != contactForm.Id)
             {
@@ -102,8 +94,7 @@ namespace Photography.Controllers
             {
                 try
                 {
-                    _context.Update(contactForm);
-                    await _context.SaveChangesAsync();
+                    contactService.UpdateContactForm(contactForm);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -118,21 +109,15 @@ namespace Photography.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AccountId"] = new SelectList(_context.Accounts, "Id", "Id", contactForm.AccountId);
+            ViewData["AccountId"] = new SelectList(accountService.GetAccounts(), "Id", "Id", contactForm.AccountId);
             return View(contactForm);
         }
 
         // GET: ContactForms/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var contactForm = await _context.ContactForms
-                .Include(c => c.Account)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var contactForm = contactService.GetContactFormById(id);
             if (contactForm == null)
             {
                 return NotFound();
@@ -144,17 +129,15 @@ namespace Photography.Controllers
         // POST: ContactForms/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var contactForm = await _context.ContactForms.FindAsync(id);
-            _context.ContactForms.Remove(contactForm);
-            await _context.SaveChangesAsync();
+            contactService.RemoveContactForm(id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool ContactFormExists(int id)
         {
-            return _context.ContactForms.Any(e => e.Id == id);
+            return contactService.CheckContactForm(id);
         }
     }
 }

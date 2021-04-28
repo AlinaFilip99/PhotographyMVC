@@ -10,38 +10,34 @@ using Photography.ApplicationLogic.Models;
 using Photography.ViewModels;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Photography.ApplicationLogic.Services;
 
 namespace Photography.Controllers
 {
     public class PhotosController : Controller
     {
-        private readonly PhotographyContext _context;
+        private readonly PhotoService photoService;
+        private readonly PostService postService;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public PhotosController(PhotographyContext context, IWebHostEnvironment webHostEnvironment)
+        public PhotosController(PhotoService photoService, IWebHostEnvironment webHostEnvironment, PostService postService)
         {
-            _context = context;
-            _webHostEnvironment = webHostEnvironment;
+            this.photoService = photoService;
+            this._webHostEnvironment = webHostEnvironment;
+            this.postService = postService;
         }
 
         // GET: Photos
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var photographyContext = _context.Photos.Include(p => p.Post);
-            return View(await photographyContext.ToListAsync());
+            var photos = photoService.GetPhotos();
+            return View(photos);
         }
 
         // GET: Photos/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var photo = await _context.Photos
-                .Include(p => p.Post)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var photo = photoService.GetPhotoById(id);
             if (photo == null)
             {
                 return NotFound();
@@ -53,7 +49,7 @@ namespace Photography.Controllers
         // GET: Photos/Create
         public IActionResult Create()
         {
-            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id");
+            ViewData["PostId"] = new SelectList(postService.GetPosts(), "Id", "Id");
             return View();
         }
 
@@ -75,28 +71,22 @@ namespace Photography.Controllers
                 {
                     await photoViewModel.PictureFile.CopyToAsync(fileStream);
                 }
-                _context.Add(photoViewModel.photo);
-                await _context.SaveChangesAsync();
+                photoService.AddPhoto(photoViewModel.photo);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id", photoViewModel.photo.PostId);
+            ViewData["PostId"] = new SelectList(postService.GetPosts(), "Id", "Id", photoViewModel.photo.PostId);
             return View(photoViewModel.photo);
         }
 
         // GET: Photos/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var photo = await _context.Photos.FindAsync(id);
+            var photo = photoService.GetPhotoById(id);
             if (photo == null)
             {
                 return NotFound();
             }
-            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id", photo.PostId);
+            ViewData["PostId"] = new SelectList(postService.GetPosts(), "Id", "Id", photo.PostId);
             return View(photo);
         }
 
@@ -105,9 +95,9 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Picture,PostId")] Photo photo)
+        public async Task<IActionResult> Edit(int id, PhotoViewModel photoViewModel)
         {
-            if (id != photo.Id)
+            if (id != photoViewModel.photo.Id)
             {
                 return NotFound();
             }
@@ -116,12 +106,20 @@ namespace Photography.Controllers
             {
                 try
                 {
-                    _context.Update(photo);
-                    await _context.SaveChangesAsync();
+                    string fileName = Path.GetFileNameWithoutExtension(photoViewModel.PictureFile.FileName);
+                    string extension = Path.GetExtension(photoViewModel.PictureFile.FileName);
+                    fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+                    photoViewModel.photo.Picture = "~/Image/" + fileName;
+                    fileName = Path.Combine(_webHostEnvironment.ContentRootPath, "Image", fileName);
+                    using (Stream fileStream = new FileStream(fileName, FileMode.Create))
+                    {
+                        await photoViewModel.PictureFile.CopyToAsync(fileStream);
+                    }
+                    photoService.UpdatePhoto(photoViewModel.photo);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PhotoExists(photo.Id))
+                    if (!PhotoExists(photoViewModel.photo.Id))
                     {
                         return NotFound();
                     }
@@ -132,21 +130,14 @@ namespace Photography.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Id", photo.PostId);
-            return View(photo);
+            ViewData["PostId"] = new SelectList(postService.GetPosts(), "Id", "Id", photoViewModel.photo.PostId);
+            return View(photoViewModel.photo);
         }
 
         // GET: Photos/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var photo = await _context.Photos
-                .Include(p => p.Post)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var photo = photoService.GetPhotoById(id);
             if (photo == null)
             {
                 return NotFound();
@@ -158,17 +149,15 @@ namespace Photography.Controllers
         // POST: Photos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var photo = await _context.Photos.FindAsync(id);
-            _context.Photos.Remove(photo);
-            await _context.SaveChangesAsync();
+            photoService.RemovePhoto(id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool PhotoExists(int id)
         {
-            return _context.Photos.Any(e => e.Id == id);
+            return photoService.CheckPhoto(id);
         }
     }
 }

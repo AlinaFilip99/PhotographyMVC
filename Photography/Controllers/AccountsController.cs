@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using Photography.DataAccess;
 using Photography.ApplicationLogic.Models;
 using Photography.ApplicationLogic.Services;
+using Photography.ViewModels;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Photography.Controllers
 {
@@ -15,11 +18,15 @@ namespace Photography.Controllers
     {
         //private readonly PhotographyContext _context;
         private readonly AccountService accountService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly RoleService roleService;
 
-        public AccountsController(AccountService AccountService, PhotographyContext context)
+        public AccountsController(AccountService AccountService, IWebHostEnvironment webHostEnvironment, RoleService roleService)
         {
             //_context = context;
             this.accountService = AccountService;
+            this._webHostEnvironment = webHostEnvironment;
+            this.roleService = roleService;
         }
 
         // GET: Accounts
@@ -28,18 +35,12 @@ namespace Photography.Controllers
             var accounts = accountService.GetAccounts();
             return View(accounts);
         }
-        /*
+        
         // GET: Accounts/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var account = await _context.Accounts
-                .Include(a => a.Role)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var account = accountService.GetAccountById(id);
             if (account == null)
             {
                 return NotFound();
@@ -47,45 +48,49 @@ namespace Photography.Controllers
 
             return View(account);
         }
-
+        
         // GET: Accounts/Create
         public IActionResult Create()
         {
-            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id");
+            ViewData["RoleId"] = new SelectList(roleService.GetRoles(), "Id", "Id");
             return View();
         }
-
+        
         // POST: Accounts/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nume,Prenume,Email,Phone,Password,ProfilePicture,FacebookLink,InstagramLink,TwitterLink,RoleId")] Account account)
+        public async Task<IActionResult> Create(AccountViewModel accountViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(account);
-                await _context.SaveChangesAsync();
+                string fileName = Path.GetFileNameWithoutExtension(accountViewModel.ProfilePictureFile.FileName);
+                string extension = Path.GetExtension(accountViewModel.ProfilePictureFile.FileName);
+                fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+                accountViewModel.account.ProfilePicture = "~/Image/" + fileName;
+                fileName = Path.Combine(_webHostEnvironment.ContentRootPath, "Image", fileName);
+                using (Stream fileStream = new FileStream(fileName, FileMode.Create))
+                {
+                    await accountViewModel.ProfilePictureFile.CopyToAsync(fileStream);
+                }
+                //_context.Add(accountViewModel.account);
+                accountService.AddAccount(accountViewModel.account);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id", account.RoleId);
-            return View(account);
+            ViewData["RoleId"] = new SelectList(roleService.GetRoles(), "Id", "Id", accountViewModel.account.RoleId);
+            return View(accountViewModel.account);
         }
 
         // GET: Accounts/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var account = await _context.Accounts.FindAsync(id);
+            var account = accountService.GetAccountById(id);
             if (account == null)
             {
                 return NotFound();
             }
-            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id", account.RoleId);
+            ViewData["RoleId"] = new SelectList(roleService.GetRoles(), "Id", "Id", account.RoleId);
             return View(account);
         }
 
@@ -94,9 +99,9 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nume,Prenume,Email,Phone,Password,ProfilePicture,FacebookLink,InstagramLink,TwitterLink,RoleId")] Account account)
+        public async Task<IActionResult> Edit(int id, AccountViewModel accountViewModel)
         {
-            if (id != account.Id)
+            if (id != accountViewModel.account.Id)
             {
                 return NotFound();
             }
@@ -105,12 +110,20 @@ namespace Photography.Controllers
             {
                 try
                 {
-                    _context.Update(account);
-                    await _context.SaveChangesAsync();
+                    string fileName = Path.GetFileNameWithoutExtension(accountViewModel.ProfilePictureFile.FileName);
+                    string extension = Path.GetExtension(accountViewModel.ProfilePictureFile.FileName);
+                    fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+                    accountViewModel.account.ProfilePicture = "~/Image/" + fileName;
+                    fileName = Path.Combine(_webHostEnvironment.ContentRootPath, "Image", fileName);
+                    using (Stream fileStream = new FileStream(fileName, FileMode.Create))
+                    {
+                        await accountViewModel.ProfilePictureFile.CopyToAsync(fileStream);
+                    }
+                    accountService.UpdateAccount(accountViewModel.account);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AccountExists(account.Id))
+                    if (!AccountExists(accountViewModel.account.Id))
                     {
                         return NotFound();
                     }
@@ -121,21 +134,15 @@ namespace Photography.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id", account.RoleId);
-            return View(account);
+            ViewData["RoleId"] = new SelectList(roleService.GetRoles(), "Id", "Id", accountViewModel.account.RoleId);
+            return View(accountViewModel.account);
         }
 
         // GET: Accounts/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var account = await _context.Accounts
-                .Include(a => a.Role)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var account = accountService.GetAccountById(id);
             if (account == null)
             {
                 return NotFound();
@@ -147,18 +154,16 @@ namespace Photography.Controllers
         // POST: Accounts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var account = await _context.Accounts.FindAsync(id);
-            _context.Accounts.Remove(account);
-            await _context.SaveChangesAsync();
+            accountService.RemoveAccount(id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool AccountExists(int id)
         {
-            return _context.Accounts.Any(e => e.Id == id);
+            return accountService.CheckAccount(id);
         }
-    }*/
     }
+  
 }

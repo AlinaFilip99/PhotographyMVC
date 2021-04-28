@@ -7,5 +7,11 @@ namespace Photography.ApplicationLogic.Abstractions
 {
     public interface ICommentRepository : IRepository<Comment>
     {
+        new IEnumerable<Comment> GetAll();
+        new Comment GetById(int id);
+        new Comment Add(Comment commentAdd);
+        new Comment Update(Comment commentUpdate);
+        new bool Remove(int id);
+        bool Exists(int id);
     }
 }

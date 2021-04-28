@@ -1,4 +1,4 @@
-﻿@model Photography.ApplicationLogic.Models.Account
+﻿@model Photography.ViewModels.AccountViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -13,53 +13,52 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Nume" class="control-label"></label>
-                <input asp-for="Nume" class="form-control" />
-                <span asp-validation-for="Nume" class="text-danger"></span>
+                <label asp-for="account.Nume" class="control-label"></label>
+                <input asp-for="account.Nume" class="form-control" />
+                <span asp-validation-for="account.Nume" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Prenume" class="control-label"></label>
-                <input asp-for="Prenume" class="form-control" />
-                <span asp-validation-for="Prenume" class="text-danger"></span>
+                <label asp-for="account.Prenume" class="control-label"></label>
+                <input asp-for="account.Prenume" class="form-control" />
+                <span asp-validation-for="account.Prenume" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+                <label asp-for="account.Email" class="control-label"></label>
+                <input asp-for="account.Email" class="form-control" />
+                <span asp-validation-for="account.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Phone" class="control-label"></label>
-                <input asp-for="Phone" class="form-control" />
-                <span asp-validation-for="Phone" class="text-danger"></span>
+                <label asp-for="account.Phone" class="control-label"></label>
+                <input asp-for="account.Phone" class="form-control" />
+                <span asp-validation-for="account.Phone" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+                <label asp-for="account.Password" class="control-label"></label>
+                <input asp-for="account.Password" class="form-control" />
+                <span asp-validation-for="account.Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ProfilePicture" class="control-label"></label>
-                <input asp-for="ProfilePicture" class="form-control" />
-                <span asp-validation-for="ProfilePicture" class="text-danger"></span>
+                <label asp-for="account.ProfilePicture" class="control-label"></label>
+                <input type="file" name="ProfilePicturefile" required />
             </div>
             <div class="form-group">
-                <label asp-for="FacebookLink" class="control-label"></label>
-                <input asp-for="FacebookLink" class="form-control" />
-                <span asp-validation-for="FacebookLink" class="text-danger"></span>
+                <label asp-for="account.FacebookLink" class="control-label"></label>
+                <input asp-for="account.FacebookLink" class="form-control" />
+                <span asp-validation-for="account.FacebookLink" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="InstagramLink" class="control-label"></label>
-                <input asp-for="InstagramLink" class="form-control" />
-                <span asp-validation-for="InstagramLink" class="text-danger"></span>
+                <label asp-for="account.InstagramLink" class="control-label"></label>
+                <input asp-for="account.InstagramLink" class="form-control" />
+                <span asp-validation-for="account.InstagramLink" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TwitterLink" class="control-label"></label>
-                <input asp-for="TwitterLink" class="form-control" />
-                <span asp-validation-for="TwitterLink" class="text-danger"></span>
+                <label asp-for="account.TwitterLink" class="control-label"></label>
+                <input asp-for="account.TwitterLink" class="form-control" />
+                <span asp-validation-for="account.TwitterLink" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="RoleId" class="control-label"></label>
-                <select asp-for="RoleId" class ="form-control" asp-items="ViewBag.RoleId"></select>
+                <label asp-for="account.RoleId" class="control-label"></label>
+                <select asp-for="account.RoleId" class ="form-control" asp-items="ViewBag.RoleId"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
