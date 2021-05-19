@@ -9,7 +9,7 @@ using Photography.ApplicationLogic.Models;
 
 namespace Photography.DataAccess
 {
-    public class PhotographyContext : IdentityDbContext<IdentityUser>
+    public class PhotographyContext : IdentityDbContext<Account>
     {
         public PhotographyContext(DbContextOptions<PhotographyContext> options)
             : base(options)
@@ -20,6 +20,5 @@ namespace Photography.DataAccess
         public DbSet<Photo> Photos { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<ContactForm> ContactForms { get; set; }
-        public DbSet<Role> Roles { get; set; }
     }
 }

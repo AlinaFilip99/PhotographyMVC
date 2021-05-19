@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-<br />
+<div class="text-danger text-danger text-center">@TempData["message"]</div>
 <br />
 <br />
 <br />
@@ -9,8 +9,4 @@
 <br />
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-</div>
-<div class="text-center">
-    <a class="btn border-dark" asp-area="" asp-controller="Home" asp-action="Index">Log in</a>
-    <a class="btn border-dark" asp-area="" asp-controller="Home" asp-action="Index">Register</a>
 </div>

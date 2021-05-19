@@ -7,7 +7,7 @@ using Photography.ApplicationLogic.Abstractions;
 namespace Photography.ApplicationLogic.Services
 {
     public class RoleService
-    {
+    {/*
         private readonly IRoleRepository roleRepository;
 
         public RoleService(IRoleRepository roleRepository)
@@ -38,6 +38,6 @@ namespace Photography.ApplicationLogic.Services
         public bool CheckRole(int id)
         {
             return roleRepository.Exists(id);
-        }
+        }*/
     }
 }

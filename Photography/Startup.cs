@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Photography.ApplicationLogic.Services;
 using Photography.ApplicationLogic.Abstractions;
 using Microsoft.AspNetCore.Identity;
+using Photography.ApplicationLogic.Models;
 
 namespace Photography
 {
@@ -31,12 +32,27 @@ namespace Photography
             services.AddControllersWithViews();
             services.AddRazorPages();
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<Account, IdentityRole>()
                 .AddEntityFrameworkStores<PhotographyContext>();
 
-            var connection = @"Server=(localdb)\mssqllocaldb;Database=TestEntityFrameworkDb;Trusted_Connection=True;ConnectRetryCount=0";
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = false;
+
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                options.Lockout.AllowedForNewUsers = true;
+                options.Lockout.MaxFailedAccessAttempts = 10;
+
+                options.User.RequireUniqueEmail = true;
+            });
+
+            var connection = @"Server=(localdb)\mssqllocaldb;Database=PhotographyDb;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<PhotographyContext>
-                (options => options.UseSqlServer(connection, b =>b.MigrationsAssembly("Photography.ApplicationLogic")));
+                (options => options.UseSqlServer(connection, b =>b.MigrationsAssembly("Photography.DataAccess")));
 
             services.AddScoped<IAccountRepository, EFAccountRepository>();
             services.AddScoped<AccountService>();

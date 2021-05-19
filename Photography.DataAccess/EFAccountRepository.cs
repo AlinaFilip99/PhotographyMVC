@@ -8,36 +8,37 @@ using Photography.ApplicationLogic.Models;
 
 namespace Photography.DataAccess
 {
-    public class EFAccountRepository :BaseRepository<Account>, IAccountRepository
+    public class EFAccountRepository : IAccountRepository
     {
-        public EFAccountRepository(PhotographyContext dbContext) : base(dbContext)
+        private readonly PhotographyContext dbContext;
+        public EFAccountRepository(PhotographyContext dbContext)
         {
-
+            this.dbContext = dbContext;
         }
 
-        public new IEnumerable<Account> GetAll()
+        public IEnumerable<Account> GetAll()
         {
             return dbContext.Accounts.AsEnumerable();
         } 
-        public new Account GetById(int id)
+        public Account GetById(string id)
         {
             return dbContext.Accounts
                             .Where(entity => entity.Id.Equals(id))
                             .SingleOrDefault();
         }
-        public new Account Add(Account accountAdd)
+        public Account Add(Account accountAdd)
         {
             var entity = dbContext.Accounts.Add(accountAdd);
             dbContext.SaveChanges();
             return entity.Entity;
         }
-        public new Account Update (Account accountUpdate)
+        public Account Update (Account accountUpdate)
         {
             var entity = dbContext.Accounts.Update(accountUpdate);
             dbContext.SaveChanges();
             return entity.Entity;
         }
-        public new bool Remove(int id)
+        public bool Remove(string id)
         {
             var entityToRemove = GetById(id);
             if (entityToRemove != null)
@@ -48,7 +49,7 @@ namespace Photography.DataAccess
             }
             return false;
         }
-        public bool Exists(int id)
+        public bool Exists(string id)
         {
             return dbContext.Accounts.Any(e => e.Id == id);
         }

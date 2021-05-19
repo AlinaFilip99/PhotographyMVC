@@ -1,0 +1,40 @@
+﻿@model Photography.ApplicationLogic.Models.Account
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div class="d-flex">
+    <div class="w-25 text-center pt-4 border-right-0 rounded-left" style="background: linear-gradient(to right, #9cb4e2, #ccddff);">
+        <img class="rounded bg-light" src="@Url.Content(Model.ProfilePicture)" style="width: 125px;height: auto;" />
+        <h4 style="color: #fff">@Html.DisplayFor(model => model.Nume) @Html.DisplayFor(model => model.Prenume)</h4>
+    </div>
+    <div class="w-75 pt-4 pl-3 pr-3 border-left-0 rounded-right" style="background: #ffff">
+        <div class="mb-2">
+            <h3 class="border-bottom" style="color: #353c4e;">Informations</h3>
+            <div class="d-flex justify-content-between">
+                <div class="w-50">
+                    <h4 style="color: #353c4e;">Email:</h4>
+                    <p style="color: #919aa3;">@Html.DisplayFor(model => model.Email)</p>
+                </div>
+                <div class="w-50">
+                    <h4 style="color: #353c4e;">Phone number:</h4>
+                    <p style="color: #919aa3;">@Html.DisplayFor(model => model.PhoneNumber)</p>
+                </div>
+            </div>
+        </div>
+        <div class="mb-2">
+            <h3 class="border-bottom" style="color: #353c4e;">Others</h3>
+            <div class="d-flex justify-content-between">
+                <div class="w-50">
+                    <h4 style="color: #353c4e;">Upload a photo:</h4>
+                    <p><a class="btn btn-primary border-0 d-inline-block" style="background: #6f95f8; cursor: pointer;color: white;">Upload</a></p>
+                </div>
+                <div class="w-50">
+                    <h4 style="color: #353c4e;">Edit:</h4>
+                    <p><a class="btn btn-primary border-0 d-inline-block" style="background: #6f95f8;cursor: pointer;color: white;">Edit Info</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

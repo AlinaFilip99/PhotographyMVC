@@ -15,7 +15,7 @@ namespace Photography.ApplicationLogic.Models
         [DisplayName("Date")]
         public DateTime DataF { get; set; }
         public string Message { get; set; }
-        public int AccountId { get; set; }
+        public string AccountId { get; set; }
         public Account Account { get; set; }
     }
 }

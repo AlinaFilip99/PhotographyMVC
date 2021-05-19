@@ -12,7 +12,7 @@ using Photography.ApplicationLogic.Services;
 namespace Photography.Controllers
 {
     public class RolesController : Controller
-    {
+    {/*
         private readonly RoleService roleService;
 
         public RolesController(RoleService roleService)
@@ -129,6 +129,6 @@ namespace Photography.Controllers
         private bool RoleExists(int id)
         {
             return roleService.CheckRole(id);
-        }
+        }*/
     }
 }

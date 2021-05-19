@@ -11,22 +11,96 @@ using Photography.ApplicationLogic.Services;
 using Photography.ViewModels;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace Photography.Controllers
 {
     public class AccountsController : Controller
     {
-        //private readonly PhotographyContext _context;
         private readonly AccountService accountService;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly RoleService roleService;
 
-        public AccountsController(AccountService AccountService, IWebHostEnvironment webHostEnvironment, RoleService roleService)
+        public AccountsController(AccountService AccountService)
         {
             //_context = context;
             this.accountService = AccountService;
-            this._webHostEnvironment = webHostEnvironment;
-            this.roleService = roleService;
+            //this.roleService = roleService;
+        }
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+                string fileName = Path.GetFileNameWithoutExtension(model.ProfilePictureFile.FileName);
+                string extension = Path.GetExtension(model.ProfilePictureFile.FileName);
+                fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+
+                var result = await accountService.RegisterUser(model.Nume, model.Prenume, model.Email,
+                    "~/Images/" + fileName, model.Password);
+                fileName = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\Images", fileName);
+
+                using (Stream fileStream = new FileStream(fileName, FileMode.Create))
+                {
+                    await model.ProfilePictureFile.CopyToAsync(fileStream);
+                }
+
+                if (result.Succeeded)
+                {
+                    TempData["message"] = "User created succesfully!";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                //_logger.LogInformation("Unable to register user.");
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
+                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
+
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Login()
+        {
+            return View();
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(LoginViewModel user)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await accountService.SignInCredentials(user.Email, user.Password, user.RememberMe);
+                
+                if (result.Succeeded)
+                {
+                    TempData["message"] = "Logged in succesfully!";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
+
+            }
+            return View(user);
+        }
+        public IActionResult Logout()
+        {
+            accountService.SignOut();
+            TempData["message"] = "User logged out!";
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Accounts
@@ -60,12 +134,12 @@ namespace Photography.Controllers
             }
             return View(accounts);
         }
-        
+        [Authorize(Roles ="Admin")]
         // GET: Accounts/Details/5
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(string id)
         {
 
-            var account = accountService.GetAccountById(id);
+            Account account = await accountService.GetUser(User);
             if (account == null)
             {
                 return NotFound();
@@ -73,11 +147,23 @@ namespace Photography.Controllers
 
             return View(account);
         }
-        
+        public async Task<IActionResult> Profile(string id)
+        {
+
+            Account account = await accountService.GetUser(User);
+
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            return View(account);
+        }
+
         // GET: Accounts/Create
         public IActionResult Create()
         {
-            ViewData["RoleId"] = new SelectList(roleService.GetRoles(), "Id", "Id");
+            //ViewData["RoleId"] = new SelectList(roleService.GetRoles(), "Id", "Id");
             return View();
         }
         
@@ -103,19 +189,19 @@ namespace Photography.Controllers
                 accountService.AddAccount(accountViewModel.account);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RoleId"] = new SelectList(roleService.GetRoles(), "Id", "Id", accountViewModel.account.RoleId);
+            //ViewData["RoleId"] = new SelectList(roleService.GetRoles(), "Id", "Id", accountViewModel.account.);
             return View(accountViewModel.account);
         }
 
         // GET: Accounts/Edit/5
-        public IActionResult Edit(int id)
+        public IActionResult Edit(string id)
         {
             var account = accountService.GetAccountById(id);
             if (account == null)
             {
                 return NotFound();
             }
-            ViewData["RoleId"] = new SelectList(roleService.GetRoles(), "Id", "Id", account.RoleId);
+            //ViewData["RoleId"] = new SelectList(roleService.GetRoles(), "Id", "Id", account.RoleId);
             return View(account);
         }
 
@@ -124,7 +210,7 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, AccountViewModel accountViewModel)
+        public async Task<IActionResult> Edit(string id, AccountViewModel accountViewModel)
         {
             if (id != accountViewModel.account.Id)
             {
@@ -159,12 +245,12 @@ namespace Photography.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RoleId"] = new SelectList(roleService.GetRoles(), "Id", "Id", accountViewModel.account.RoleId);
+            //ViewData["RoleId"] = new SelectList(roleService.GetRoles(), "Id", "Id", accountViewModel.account.RoleId);
             return View(accountViewModel.account);
         }
 
         // GET: Accounts/Delete/5
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string id)
         {
 
             var account = accountService.GetAccountById(id);
@@ -179,13 +265,13 @@ namespace Photography.Controllers
         // POST: Accounts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(string id)
         {
             accountService.RemoveAccount(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AccountExists(int id)
+        private bool AccountExists(string id)
         {
             return accountService.CheckAccount(id);
         }

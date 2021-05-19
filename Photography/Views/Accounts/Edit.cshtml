@@ -29,38 +29,18 @@
                 <span asp-validation-for="account.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="account.Phone" class="control-label"></label>
-                <input asp-for="account.Phone" class="form-control" />
-                <span asp-validation-for="account.Phone" class="text-danger"></span>
+                <label asp-for="account.PhoneNumber" class="control-label"></label>
+                <input asp-for="account.PhoneNumber" class="form-control" />
+                <span asp-validation-for="account.PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="account.Password" class="control-label"></label>
-                <input asp-for="account.Password" class="form-control" />
-                <span asp-validation-for="account.Password" class="text-danger"></span>
+                <label asp-for="account.PasswordHash" class="control-label"></label>
+                <input asp-for="account.PasswordHash" class="form-control" />
+                <span asp-validation-for="account.PasswordHash" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="account.ProfilePicture" class="control-label"></label>
-                <<input type="file" name="ProfilePicturefile" required />
-            </div>
-            <div class="form-group">
-                <label asp-for="account.FacebookLink" class="control-label"></label>
-                <input asp-for="account.FacebookLink" class="form-control" />
-                <span asp-validation-for="account.FacebookLink" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="account.InstagramLink" class="control-label"></label>
-                <input asp-for="account.InstagramLink" class="form-control" />
-                <span asp-validation-for="account.InstagramLink" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="account.TwitterLink" class="control-label"></label>
-                <input asp-for="account.TwitterLink" class="form-control" />
-                <span asp-validation-for="account.TwitterLink" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="account.RoleId" class="control-label"></label>
-                <select asp-for="account.RoleId" class="form-control" asp-items="ViewBag.RoleId"></select>
-                <span asp-validation-for="account.RoleId" class="text-danger"></span>
+                <input type="file" name="ProfilePicturefile" required />
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -70,7 +50,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Back to Accounts</a>
 </div>
 
 @section Scripts {

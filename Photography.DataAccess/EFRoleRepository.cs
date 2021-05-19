@@ -13,7 +13,7 @@ namespace Photography.DataAccess
         public EFRoleRepository(PhotographyContext dbContext) : base(dbContext)
         {
 
-        }
+        }/*
         public new IEnumerable<Role> GetAll()
         {
             return dbContext.Roles.AsEnumerable();
@@ -50,6 +50,6 @@ namespace Photography.DataAccess
         public bool Exists(int id)
         {
             return dbContext.Roles.Any(e => e.Id == id);
-        }
+        }*/
     }
 }
