@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Photography.ApplicationLogic.Models;
 using Photography.ApplicationLogic.Abstractions;
+using System.Threading.Tasks;
 
 namespace Photography.ApplicationLogic.Services
 {
@@ -23,9 +24,14 @@ namespace Photography.ApplicationLogic.Services
         {
             return photoRepository.GetById(id);
         }
-        public Photo AddPhoto(Photo photoToAdd)
+        public Photo AddPhoto(string photoPath, int postId)
         {
-            return photoRepository.Add(photoToAdd);
+            var photo = new Photo
+            {
+                Picture = photoPath,
+                PostId = postId
+            };
+            return photoRepository.Add(photo);
         }
         public Photo UpdatePhoto(Photo photoToUpdate)
         {
@@ -42,6 +48,11 @@ namespace Photography.ApplicationLogic.Services
         public IEnumerable<Photo> GetPhotoByPostId (int id)
         {
             return photoRepository.GetByPost(id);
-        } 
+        }
+
+        public IEnumerable<Photo> GetPhotosByPostIds(IEnumerable<int> postsIds)
+        {
+            return photoRepository.GetByPostIds(postsIds);
+        }
     }
 }

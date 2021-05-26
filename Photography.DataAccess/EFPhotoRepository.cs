@@ -55,5 +55,10 @@ namespace Photography.DataAccess
         {
             return dbContext.Photos.Where(entity => entity.PostId.Equals(id)).AsEnumerable();
         }
+
+        public IEnumerable<Photo> GetByPostIds(IEnumerable<int> postsIds)
+        {
+            return dbContext.Photos.Where(x => postsIds.Contains(x.PostId)).AsEnumerable();
+        }
     }
 }

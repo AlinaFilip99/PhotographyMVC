@@ -11,9 +11,11 @@ using Photography.ViewModels;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Photography.ApplicationLogic.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Photography.Controllers
 {
+    [Authorize(Roles = "Admin,User")]
     public class PhotosController : Controller
     {
         private readonly PhotoService photoService;
@@ -28,9 +30,14 @@ namespace Photography.Controllers
         }
 
         // GET: Photos
-        public IActionResult Index()
+        public IActionResult Index(string searchString)
         {
-            var photos = photoService.GetPhotos();
+            var posts = postService.GetPostIds();
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                posts = postService.GetPostIdsByString(searchString);
+            }
+            var photos = photoService.GetPhotosByPostIds(posts);
             return View(photos);
         }
 
@@ -56,7 +63,7 @@ namespace Photography.Controllers
         // POST: Photos/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        /*[HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create( PhotoViewModel photoViewModel)
         {
@@ -76,7 +83,7 @@ namespace Photography.Controllers
             }
             ViewData["PostId"] = new SelectList(postService.GetPosts(), "Id", "Id", photoViewModel.photo.PostId);
             return View(photoViewModel.photo);
-        }
+        }*/
 
         // GET: Photos/Edit/5
         public IActionResult Edit(int id)

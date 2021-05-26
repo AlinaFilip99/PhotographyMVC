@@ -1,41 +1,27 @@
 ﻿@model IEnumerable<Photography.ApplicationLogic.Models.Photo>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Gallery";
 }
+<div>
+    <form class=" w-100 pb-1" asp-action="Index" method="get">
+        <div class="d-flex">
+            <input class="w-75 rounded border-0 form-control" type="text" name="searchString" placeholder="Search..." />
+            <input class="btn btn-outline-primary ml-1 bg-white" type="submit" value="Search" />
+            <a class="btn btn-outline-primary ml-1 bg-white" asp-action="Index">See all</a>
+        </div>
+    </form>
+</div>
+<div class="row bg-white rounded">
+    <div class="card-columns p-md-3">
+        @foreach (var item in Model)
+        {
+            <div class="card">
+                <a asp-controller="Posts" asp-action="Details" asp-route-id="@item.PostId"><img src="@Url.Content(item.Picture)" class="card-img img-fluid" alt="photo" /></a>
+            </div>
+        }
 
-<h1>Index</h1>
+    </div>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Picture)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Post)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                <img src="@Url.Content(item.Picture)" style="width: 125px;height: auto;" alt="photo"/>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Post.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+

@@ -1,40 +1,29 @@
-﻿@model Photography.ApplicationLogic.Models.Post
+﻿@model Photography.ViewModels.PostPhotosCreate
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
-
-<h4>Post</h4>
 <hr />
-<div class="row">
+<div class="row bg-white rounded">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form class="p-4" asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <label class="control-label">Description: </label>
+                <input type="text" asp-for="description" class="form-control" />
+                <span asp-validation-for="description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Likes" class="control-label"></label>
-                <input asp-for="Likes" class="form-control" />
-                <span asp-validation-for="Likes" class="text-danger"></span>
+                <label class="control-label">Photos: </label>
+                <input type="file" multiple asp-for="pictureFiles" class="form-control-file" required />
             </div>
             <div class="form-group">
-                <label asp-for="AccountId" class="control-label"></label>
-                <select asp-for="AccountId" class ="form-control" asp-items="ViewBag.AccountId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary border-0 d-inline-block" style="background: #6f95f8;cursor: pointer;color: white;" />
+                <a asp-controller="Accounts" asp-action="Profile" class="btn btn-primary border-0 d-inline-block" style="background: #6f95f8;cursor: pointer;color: white;">Cancel</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

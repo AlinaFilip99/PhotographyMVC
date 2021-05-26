@@ -9,9 +9,12 @@ using Photography.DataAccess;
 using Photography.ApplicationLogic.Models;
 using Photography.ApplicationLogic.Services;
 using Photography.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using System.IO;
 
 namespace Photography.Controllers
 {
+    [Authorize(Roles = "Admin,User")]
     public class PostsController : Controller
     {
         private readonly PostService postService;
@@ -34,10 +37,32 @@ namespace Photography.Controllers
             return View(posts);
         }
         */
-        public IActionResult Index(int id)
+        public IActionResult Index(string id)
         {
             var posts = postService.GetPostByUserId(id);
             return View(posts);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddComment(int id, string message)
+        {
+            if (message != null)
+            {
+                var comm = await commentService.CreateComment(User, message, id);
+            }
+            return RedirectToAction("Details", new { id = id });
+        }
+
+        public IActionResult IncrementLikes(int id)
+        {
+            var post = postService.GetPostById(id);
+            post.Likes = post.Likes + 1;
+            if (post == null)
+            {
+                return NotFound();
+            }
+            postService.UpdatePost(post);
+            return RedirectToAction("Details", new { id = id });
         }
 
         // GET: Posts/Details/5
@@ -59,10 +84,27 @@ namespace Photography.Controllers
             return View(PPCViewModel);
         }
 
+        public IActionResult DetailsProfile(int id)
+        {
+            var post = postService.GetPostById(id);
+            var photos = photoService.GetPhotoByPostId(id);
+            var comments = commentService.GetCommentByPostId(id);
+            if (post == null)
+            {
+                return NotFound();
+            }
+            var PPCViewModel = new PostPhotosCommentsViewModel
+            {
+                post = post,
+                photos = photos,
+                comments = comments
+            };
+            return View(PPCViewModel);
+        }
+
         // GET: Posts/Create
         public IActionResult Create()
         {
-            ViewData["AccountId"] = new SelectList(accountService.GetAccounts(), "Id", "Id");
             return View();
         }
 
@@ -71,15 +113,31 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,Description,Likes,AccountId")] Post post)
+        public async Task<IActionResult> Create(PostPhotosCreate postPhotosCreate)
         {
             if (ModelState.IsValid)
             {
-                postService.AddPost(post);
-                return RedirectToAction(nameof(Index));
+                var post = postService.CreatePostWithDesc(User, postPhotosCreate.description);
+                foreach (var file in postPhotosCreate.pictureFiles)
+                {
+                    string fileName = Path.GetFileNameWithoutExtension(file.FileName);
+                    string extension = Path.GetExtension(file.FileName);
+                    fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+
+                    _=photoService.AddPhoto("~/Images/" + fileName, post.Id);
+                    
+                    fileName = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\Images", fileName);
+
+                    using (Stream fileStream = new FileStream(fileName, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+                }
+                //postService.AddPost(post);
+                return RedirectToAction("Profile", "Accounts");
             }
-            ViewData["AccountId"] = new SelectList(accountService.GetAccounts(), "Id", "Id", post.AccountId);
-            return View(post);
+            //ViewData["AccountId"] = new SelectList(accountService.GetAccounts(), "Id", "Id", post.AccountId);
+            return View("Accounts", "Profile");
         }
 
         // GET: Posts/Edit/5
@@ -132,13 +190,8 @@ namespace Photography.Controllers
         // GET: Posts/Delete/5
         public IActionResult Delete(int id)
         {
-            var post = postService.GetPostById(id);
-            if (post == null)
-            {
-                return NotFound();
-            }
-
-            return View(post);
+            postService.RemovePost(id);
+            return RedirectToAction("Profile", "Accounts");
         }
 
         // POST: Posts/Delete/5

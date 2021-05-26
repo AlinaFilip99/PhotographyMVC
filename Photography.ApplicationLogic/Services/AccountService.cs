@@ -16,15 +16,20 @@ namespace Photography.ApplicationLogic.Services
         private readonly UserManager<Account> _userManager;
         private readonly SignInManager<Account> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly PostService postService;
+        private readonly PhotoService photoService;
 
         public AccountService(IAccountRepository accountRepository,
             UserManager<Account> userManager, SignInManager<Account> signInManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager, PostService postService,
+            PhotoService photoService)
         {
             this.accountRepository = accountRepository;
             this._userManager = userManager;
             this._signInManager = signInManager;
             this._roleManager = roleManager;
+            this.postService = postService;
+            this.photoService = photoService;
         }
 
         public IEnumerable<Account> GetAccounts()
@@ -40,20 +45,33 @@ namespace Photography.ApplicationLogic.Services
         {
             return accountRepository.Add(accountToAdd);
         }
-        public Account UpdateAccount(Account accountToUpdate)
+        public async Task<Account> UpdateAccount(ClaimsPrincipal user, string userName, string nume, string prenume, string email, string number, 
+            string profilePath, string currentPassword, string newPassword, 
+            string facebook, string instagram, string twitter)
         {
-            return accountRepository.Update(accountToUpdate);
+            var account=await _userManager.GetUserAsync(user);
+            account.UserName = userName;
+            account.Nume = nume;
+            account.Prenume = prenume;
+            account.Email = email;
+            account.PhoneNumber = number;
+            account.FacebookLink = facebook;
+            account.InstagramLink = instagram;
+            account.TwitterLink = twitter;
+            if (profilePath != " ")
+            {
+                account.ProfilePicture = profilePath;
+            }
+            await _userManager.UpdateAsync(account);
+            if (currentPassword != null && newPassword != null)
+            {
+                await _userManager.ChangePasswordAsync(account, currentPassword, newPassword);
+            }
+            return account;
         }
         public bool RemoveAccount(string id)
         {
             return accountRepository.Remove(id);
-        }
-
-        public async void UpdatePassword(ClaimsPrincipal user, string password)
-        {
-            Account account=await _userManager.GetUserAsync(user);
-            account.PasswordHash = password;
-            await _userManager.UpdateAsync(account);
         }
 
         public bool CheckAccount(string id)
@@ -103,6 +121,10 @@ namespace Photography.ApplicationLogic.Services
                 await _signInManager.SignInAsync(user, isPersistent: false);
             }
             return result;
+        }
+        public async Task<Account> GetAccountByName(string userName)
+        {
+            return await _userManager.FindByNameAsync(userName);
         }
     }
 }

@@ -9,9 +9,11 @@ using Photography.DataAccess;
 using Photography.ApplicationLogic.Models;
 using Photography.ApplicationLogic.Services;
 using Photography.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Photography.Controllers
 {
+    [Authorize(Roles = "Admin,User")]
     public class ContactFormsController : Controller
     {
         //private readonly PhotographyContext _context;
@@ -67,7 +69,7 @@ namespace Photography.Controllers
         // GET: ContactForms/Create
         public IActionResult Create()
         {
-            ViewData["AccountId"] = new SelectList(accountService.GetAccounts(), "Id", "Id");
+            //ViewData["AccountId"] = new SelectList(accountService.GetAccounts(), "Id", "Id");
             return View();
         }
 
@@ -76,14 +78,16 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,NumeF,PrenumeF,DataF,Message,AccountId")] ContactForm contactForm)
+        public async Task<IActionResult> Create(ContactForm contactForm)
         {
+            Account account = await accountService.GetUser(User);
+            contactForm.AccountId = account.Id;
             if (ModelState.IsValid)
             {
                 contactService.AddContactForm(contactForm);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Create));
             }
-            ViewData["AccountId"] = new SelectList(accountService.GetAccounts(), "Id", "Id", contactForm.AccountId);
+            //ViewData["AccountId"] = new SelectList(accountService.GetAccounts(), "Id", "Id", contactForm.AccountId);
             return View(contactForm);
         }
 

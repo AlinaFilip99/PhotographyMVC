@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Photography.DataAccess;
 using Photography.ApplicationLogic.Services;
 using Photography.ApplicationLogic.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Photography.Controllers
 {
+    [Authorize(Roles ="Admin,User")]
     public class CommentsController : Controller
     {
         //private readonly PhotographyContext _context;

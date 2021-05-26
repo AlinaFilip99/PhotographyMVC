@@ -3,54 +3,73 @@
 @{
     ViewData["Title"] = "Edit";
 }
-
-<h1>Edit</h1>
-
-<h4>Account</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+<div class="row bg-white rounded">
+        <form class="w-100" asp-action="Edit" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="account.Id" />
-            <div class="form-group">
-                <label asp-for="account.Nume" class="control-label"></label>
-                <input asp-for="account.Nume" class="form-control" />
-                <span asp-validation-for="account.Nume" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="account.Prenume" class="control-label"></label>
-                <input asp-for="account.Prenume" class="form-control" />
-                <span asp-validation-for="account.Prenume" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="account.Email" class="control-label"></label>
-                <input asp-for="account.Email" class="form-control" />
-                <span asp-validation-for="account.Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="account.PhoneNumber" class="control-label"></label>
-                <input asp-for="account.PhoneNumber" class="form-control" />
-                <span asp-validation-for="account.PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="account.PasswordHash" class="control-label"></label>
-                <input asp-for="account.PasswordHash" class="form-control" />
-                <span asp-validation-for="account.PasswordHash" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="account.ProfilePicture" class="control-label"></label>
-                <input type="file" name="ProfilePicturefile" required />
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="d-md-flex w-100">
+                <div class="w-50 p-4">
+                    <div class="form-group">
+                        <label class="control-label">User name: </label>
+                        <input asp-for="userName" class="form-control" />
+                        <span asp-validation-for="userName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Nume: </label>
+                        <input asp-for="nume" class="form-control" />
+                        <span asp-validation-for="nume" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Prenume: </label>
+                        <input asp-for="prenume" class="form-control" />
+                        <span asp-validation-for="prenume" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Email: </label>
+                        <input asp-for="email" class="form-control" />
+                        <span asp-validation-for="email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Phone number: </label>
+                        <input asp-for="phoneNumber" class="form-control" />
+                        <span asp-validation-for="phoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Profile picture: </label>
+                        <input type="file" name="ProfilePicturefile" class="form-control-file" />
+                    </div>
+                </div>
+                <div class="w-50 p-4">
+                    <div class="form-group">
+                        <label class="control-label">Current password: </label>
+                        <input type="password" name="currentPassword" placeholder="Current password" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">New password: </label>
+                        <input type="password" name="newPassword" placeholder="New password" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Facebook: </label>
+                        <input asp-for="facebook" class="form-control" />
+                        <span asp-validation-for="facebook" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Instagram: </label>
+                        <input asp-for="instagram" class="form-control" />
+                        <span asp-validation-for="instagram" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Twitter: </label>
+                        <input asp-for="twitter" class="form-control" />
+                        <span asp-validation-for="twitter" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-primary border-0 d-inline-block" style="background: #6f95f8;cursor: pointer;color: white;" />
+                        <a asp-controller="Accounts" asp-action="Profile" class="btn btn-primary border-0 d-inline-block" style="background: #6f95f8;cursor: pointer;color: white;">Cancel</a>
+                    </div>
+                </div>
             </div>
         </form>
-    </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to Accounts</a>
 </div>
 
 @section Scripts {

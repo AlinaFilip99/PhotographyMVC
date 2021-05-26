@@ -10,56 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="account.Nume" class="control-label"></label>
-                <input asp-for="account.Nume" class="form-control" />
-                <span asp-validation-for="account.Nume" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="account.Prenume" class="control-label"></label>
-                <input asp-for="account.Prenume" class="form-control" />
-                <span asp-validation-for="account.Prenume" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="account.Email" class="control-label"></label>
-                <input asp-for="account.Email" class="form-control" />
-                <span asp-validation-for="account.Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="account.PhoneNumber" class="control-label"></label>
-                <input asp-for="account.PhoneNumber" class="form-control" />
-                <span asp-validation-for="account.PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="account.PasswordHash" class="control-label"></label>
-                <input asp-for="account.PasswordHash" class="form-control" />
-                <span asp-validation-for="account.PasswordHash" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="account.ProfilePicture" class="control-label"></label>
-                <input type="file" name="ProfilePicturefile" />
-            </div>
-            <div class="form-group">
-                <label asp-for="account.FacebookLink" class="control-label"></label>
-                <input asp-for="account.FacebookLink" class="form-control" />
-                <span asp-validation-for="account.FacebookLink" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="account.InstagramLink" class="control-label"></label>
-                <input asp-for="account.InstagramLink" class="form-control" />
-                <span asp-validation-for="account.InstagramLink" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="account.TwitterLink" class="control-label"></label>
-                <input asp-for="account.TwitterLink" class="form-control" />
-                <span asp-validation-for="account.TwitterLink" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        
     </div>
 </div>
 

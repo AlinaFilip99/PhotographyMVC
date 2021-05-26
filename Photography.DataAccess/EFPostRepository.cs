@@ -51,9 +51,24 @@ namespace Photography.DataAccess
         {
             return dbContext.Posts.Any(e => e.Id == id);
         }
-        public IEnumerable<Post> GetByUser(int id)
+        public IEnumerable<Post> GetByUser(string id)
         {
             return dbContext.Posts.Where(entity => entity.AccountId.Equals(id)).AsEnumerable();
+        }
+
+        public IEnumerable<int> GetIdsByUserId(string id)
+        {
+            return dbContext.Posts.Where(x=>x.AccountId.Equals(id)).Select(x => x.Id).AsEnumerable();
+        }
+
+        public IEnumerable<int> GetIds()
+        {
+            return dbContext.Posts.Select(x => x.Id).AsEnumerable();
+        }
+
+        public IEnumerable<int> GetIdsByString(string searchString)
+        {
+            return dbContext.Posts.Where(x => x.Description.Contains(searchString)).Select(x => x.Id).AsEnumerable();
         }
     }
 }

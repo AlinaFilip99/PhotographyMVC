@@ -11,5 +11,6 @@ namespace Photography.ViewModels
         public Post post { get; set; }
         public IEnumerable<Photo> photos { get; set; }
         public IEnumerable<Comment> comments { get; set; }
+        public string Message { get; set; }
     }
 }

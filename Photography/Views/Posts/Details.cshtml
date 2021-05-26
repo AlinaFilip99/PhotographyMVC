@@ -1,53 +1,51 @@
-﻿@model Photography.ViewModels.PostPhotosCommentsViewModel
+﻿@using Microsoft.AspNetCore.Identity
+@model Photography.ViewModels.PostPhotosCommentsViewModel
 
 @{
     ViewData["Title"] = "PostDetails";
 }
 
-<h1>Post</h1>
-
-<div>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.post.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.post.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.post.Likes)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.post.Likes)
-        </dd>
-</div>
-<div>
-    <h3>Photos:</h3>
-</div>
-<div>
-    @foreach (var item in Model.photos)
-    {
-        <img src="@Url.Content(item.Picture)" style="width: 350px;height: auto;padding: 30px 12px;" alt="photo" />
-    }
-</div> 
-<div>
-    <h3>Comments:</h3>
-</div>
-<br />
-<br />
-<table class="table">
-    <tbody>
-        @foreach (var item in Model.comments)
+<div class="row bg-white h-auto">
+    <div class="col p-3">
+        @foreach (var item in Model.photos)
         {
-            <tr>
-                <td class="border-dark">
-                    @Html.DisplayFor(modelItem => item.CommMessage)
-                </td>
-            </tr>
+            <img src="@Url.Content(item.Picture)" class="img-fluid mt-2 rounded" alt="photo" />
         }
-    </tbody>
-</table>
-<div>
-    <a asp-action="Index" asp-route-id="@Model.post.AccountId">Back to Posts</a>
+
+    </div>
+    <div class="col p-3">
+        <div>
+            <div>
+                <h4>Description: </h4>
+                <p>@Model.post.Description</p>
+            </div>
+            <div>
+                <a class="btn btn-primary btn-sm shadow-none mt-2" asp-controller="Posts" asp-action="IncrementLikes" asp-route-id="@Model.post.Id">Like</a>
+                <p class="float-right mt-2">@Model.post.Likes likes</p>
+            </div>
+            <div>
+                <form asp-action="AddComment" method="post">
+                    <div class="form-group">
+                        <label class="control-label mt-2">Add comment: </label>
+                        <input name="message" class="form-control ml-1 shadow-none textarea" />
+                        <input type="hidden" name="id" value="@Model.post.Id" />
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Add" class="btn btn-primary btn-sm shadow-none" />
+                        <a asp-controller="Posts" asp-action="Details" asp-route-id="@Model.post.Id" class="btn btn-outline-primary btn-sm ml-1 shadow-none">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div>
+            <h4>Comments: </h4>
+            @foreach (var comm in Model.comments)
+            {
+                <div class="text-justify darker mt-4 float-left">
+                    <a asp-controller="Accounts" asp-action="Profile" asp-route-id="@comm.UserName"><h6>User: @comm.UserName</h6></a>
+                    <p>@comm.CommMessage</p>
+                </div>
+            }
+        </div>
+    </div>
 </div>

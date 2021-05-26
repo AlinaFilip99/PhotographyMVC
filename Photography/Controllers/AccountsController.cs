@@ -17,23 +17,30 @@ using Microsoft.Extensions.Logging;
 
 namespace Photography.Controllers
 {
+    [Authorize(Roles = "Admin,User")]
     public class AccountsController : Controller
     {
         private readonly AccountService accountService;
+        private readonly PostService postService;
+        private readonly PhotoService photoService;
 
-        public AccountsController(AccountService AccountService)
+        public AccountsController(AccountService AccountService, PostService postService, PhotoService photoService)
         {
             //_context = context;
             this.accountService = AccountService;
+            this.postService = postService;
+            this.photoService = photoService;
             //this.roleService = roleService;
         }
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Register()
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
@@ -110,7 +117,7 @@ namespace Photography.Controllers
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.PrenumeSortParm = sortOrder == "pre_asc" ? "pre_desc" : "pre_asc";
 
-            var accounts = accountService.GetAccounts();
+            IEnumerable<Account> accounts = accountService.GetAccounts();
 
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -136,10 +143,10 @@ namespace Photography.Controllers
         }
         [Authorize(Roles ="Admin")]
         // GET: Accounts/Details/5
-        public async Task<IActionResult> Details(string id)
+        public IActionResult Details(string id)
         {
 
-            Account account = await accountService.GetUser(User);
+            Account account = accountService.GetAccountById(id);
             if (account == null)
             {
                 return NotFound();
@@ -147,17 +154,36 @@ namespace Photography.Controllers
 
             return View(account);
         }
-        public async Task<IActionResult> Profile(string id)
+        public async Task<IActionResult> Profile(string? id)
         {
+            Account account;
+            IEnumerable<int> postsIds= new List<int>().AsEnumerable();
+            IEnumerable<Photo> photos = new List<Photo>().AsEnumerable();
+            if (id != null)
+            {
+                account = await accountService.GetAccountByName(id);
+                postsIds = postService.GetPostIdByUserId(account.Id);
+                photos = photoService.GetPhotosByPostIds(postsIds);
+            }
+            else
+            {
+                account = await accountService.GetUser(User);
+                postsIds = postService.GetPostIdByUserId(account.Id);
+                photos = photoService.GetPhotosByPostIds(postsIds);
+            }
 
-            Account account = await accountService.GetUser(User);
+            var accountVM = new AccountPhotos
+            {
+                account = account,
+                photos= photos,
+            };
 
             if (account == null)
             {
                 return NotFound();
             }
 
-            return View(account);
+            return View(accountVM);
         }
 
         // GET: Accounts/Create
@@ -170,7 +196,7 @@ namespace Photography.Controllers
         // POST: Accounts/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        /*[HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AccountViewModel accountViewModel)
         {
@@ -191,7 +217,7 @@ namespace Photography.Controllers
             }
             //ViewData["RoleId"] = new SelectList(roleService.GetRoles(), "Id", "Id", accountViewModel.account.);
             return View(accountViewModel.account);
-        }
+        }*/
 
         // GET: Accounts/Edit/5
         public IActionResult Edit(string id)
@@ -201,8 +227,19 @@ namespace Photography.Controllers
             {
                 return NotFound();
             }
+            var accountVM = new AccountViewModel
+            {
+                userName=account.UserName,
+                nume=account.Nume,
+                prenume=account.Prenume,
+                email=account.Email,
+                phoneNumber=account.PhoneNumber,
+                facebook=account.FacebookLink,
+                instagram=account.InstagramLink,
+                twitter=account.TwitterLink
+            };
             //ViewData["RoleId"] = new SelectList(roleService.GetRoles(), "Id", "Id", account.RoleId);
-            return View(account);
+            return View(accountVM);
         }
 
         // POST: Accounts/Edit/5
@@ -210,50 +247,50 @@ namespace Photography.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, AccountViewModel accountViewModel)
+        public async Task<IActionResult> Edit(AccountViewModel accountViewModel)
         {
-            if (id != accountViewModel.account.Id)
-            {
-                return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    string fileName = Path.GetFileNameWithoutExtension(accountViewModel.ProfilePictureFile.FileName);
-                    string extension = Path.GetExtension(accountViewModel.ProfilePictureFile.FileName);
-                    fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
-                    accountViewModel.account.ProfilePicture = "~/Images/" + fileName;
-                    fileName = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\Images", fileName);
-                    using (Stream fileStream = new FileStream(fileName, FileMode.Create))
+                    if(accountViewModel.ProfilePictureFile != null)
                     {
-                        await accountViewModel.ProfilePictureFile.CopyToAsync(fileStream);
-                    }
-                    accountService.UpdateAccount(accountViewModel.account);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AccountExists(accountViewModel.account.Id))
-                    {
-                        return NotFound();
+                        string fileName = Path.GetFileNameWithoutExtension(accountViewModel.ProfilePictureFile.FileName);
+                        string extension = Path.GetExtension(accountViewModel.ProfilePictureFile.FileName);
+                        fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+                        await accountService.UpdateAccount(User, accountViewModel.userName, accountViewModel.nume, accountViewModel.prenume, accountViewModel.email,
+                            accountViewModel.phoneNumber, "~/Images/" + fileName, accountViewModel.currentPassword, accountViewModel.newPassword,
+                            accountViewModel.facebook, accountViewModel.instagram, accountViewModel.twitter);
+                        fileName = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\Images", fileName);
+                        using (Stream fileStream = new FileStream(fileName, FileMode.Create))
+                        {
+                            await accountViewModel.ProfilePictureFile.CopyToAsync(fileStream);
+                        }
                     }
                     else
                     {
-                        throw;
+                        await accountService.UpdateAccount(User, accountViewModel.userName, accountViewModel.nume, accountViewModel.prenume, accountViewModel.email,
+                            accountViewModel.phoneNumber, " ", accountViewModel.currentPassword, accountViewModel.newPassword,
+                            accountViewModel.facebook, accountViewModel.instagram, accountViewModel.twitter);
                     }
+                    
+
                 }
-                return RedirectToAction(nameof(Index));
+                catch (DbUpdateConcurrencyException)
+                {
+                }
+                return RedirectToAction(nameof(Profile));
             }
             //ViewData["RoleId"] = new SelectList(roleService.GetRoles(), "Id", "Id", accountViewModel.account.RoleId);
-            return View(accountViewModel.account);
+            return View();
         }
 
         // GET: Accounts/Delete/5
         public IActionResult Delete(string id)
         {
 
-            var account = accountService.GetAccountById(id);
+            Account account = accountService.GetAccountById(id);
             if (account == null)
             {
                 return NotFound();

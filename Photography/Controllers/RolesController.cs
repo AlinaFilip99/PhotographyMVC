@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Photography.DataAccess;
 using Photography.ApplicationLogic.Models;
 using Photography.ApplicationLogic.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Photography.Controllers
 {
+    [Authorize(Roles = "Admin,User")]
     public class RolesController : Controller
     {/*
         private readonly RoleService roleService;

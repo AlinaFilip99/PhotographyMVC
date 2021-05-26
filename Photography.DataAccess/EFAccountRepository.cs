@@ -18,32 +18,32 @@ namespace Photography.DataAccess
 
         public IEnumerable<Account> GetAll()
         {
-            return dbContext.Accounts.AsEnumerable();
+            return dbContext.Users.AsEnumerable();
         } 
         public Account GetById(string id)
         {
-            return dbContext.Accounts
+            return dbContext.Users
                             .Where(entity => entity.Id.Equals(id))
                             .SingleOrDefault();
         }
         public Account Add(Account accountAdd)
         {
-            var entity = dbContext.Accounts.Add(accountAdd);
+            var entity = dbContext.Users.Add(accountAdd);
             dbContext.SaveChanges();
             return entity.Entity;
         }
         public Account Update (Account accountUpdate)
         {
-            var entity = dbContext.Accounts.Update(accountUpdate);
+            var entity = dbContext.Users.Update(accountUpdate);
             dbContext.SaveChanges();
             return entity.Entity;
         }
         public bool Remove(string id)
         {
-            var entityToRemove = GetById(id);
+            Account entityToRemove = GetById(id);
             if (entityToRemove != null)
             {
-                dbContext.Accounts.Remove(entityToRemove);
+                dbContext.Users.Remove(entityToRemove);
                 dbContext.SaveChanges();
                 return true;
             }
@@ -51,11 +51,11 @@ namespace Photography.DataAccess
         }
         public bool Exists(string id)
         {
-            return dbContext.Accounts.Any(e => e.Id == id);
+            return dbContext.Users.Any(e => e.Id == id);
         }
         public IEnumerable<Account> GetByName(string searchString)
         {
-            return dbContext.Accounts.Where(s => s.Nume.Contains(searchString)
+            return dbContext.Users.Where(s => s.Nume.Contains(searchString)
                                        || s.Prenume.Contains(searchString));
         }
     }

@@ -1,0 +1,56 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model Photography.ViewModels.PostPhotosCommentsViewModel
+
+@{
+    ViewData["Title"] = "PostDetails";
+}
+
+<div class="row bg-white h-auto">
+    <div class="col p-3">
+        @foreach (var item in Model.photos)
+        {
+            <img src="@Url.Content(item.Picture)" class="img-fluid mt-2 rounded" alt="photo" />
+        }
+
+    </div>
+    <div class="col p-3">
+        <div class="float-md-right">
+            <a asp-controller="Posts" asp-action="Delete" asp-route-id="@Model.post.Id" class="btn btn-outline-primary btn-sm ml-1 shadow-none mt-2">Delete</a>
+        </div>
+        <div>
+            <div>
+                <h4>Description: </h4>
+                <p>@Model.post.Description</p>
+            </div>
+            <div>
+                <form asp-action="AddComment" method="post">
+                    <div class="form-group">
+                        <label class="control-label">Add comment: </label>
+                        <input name="message" class="form-control ml-1 shadow-none textarea" />
+                        <input type="hidden" name="id" value="@Model.post.Id" />
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Add" class="btn btn-primary btn-sm shadow-none mt-2" />
+                        <a asp-controller="Posts" asp-action="Details" asp-route-id="@Model.post.Id" class="btn btn-outline-primary btn-sm ml-1 shadow-none mt-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
+            </div>
+        <div>
+            <h4>Comments: </h4>
+            @foreach (var comm in Model.comments)
+            {
+                <div class="text-justify darker mt-4 float-left">
+                    <a asp-controller="Accounts" asp-action="Profile" asp-route-id="@comm.UserName"><h6>User: @comm.UserName</h6></a>
+                        <p>@comm.CommMessage</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@if (User.IsInRole("Admin"))
+{
+    <div>
+        <a asp-action="Index" asp-route-id="@Model.post.AccountId">Back to Posts</a>
+    </div>
+}
