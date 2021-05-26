@@ -16,20 +16,15 @@ namespace Photography.ApplicationLogic.Services
         private readonly UserManager<Account> _userManager;
         private readonly SignInManager<Account> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly PostService postService;
-        private readonly PhotoService photoService;
 
         public AccountService(IAccountRepository accountRepository,
             UserManager<Account> userManager, SignInManager<Account> signInManager,
-            RoleManager<IdentityRole> roleManager, PostService postService,
-            PhotoService photoService)
+            RoleManager<IdentityRole> roleManager)
         {
             this.accountRepository = accountRepository;
             this._userManager = userManager;
             this._signInManager = signInManager;
             this._roleManager = roleManager;
-            this.postService = postService;
-            this.photoService = photoService;
         }
 
         public IEnumerable<Account> GetAccounts()
