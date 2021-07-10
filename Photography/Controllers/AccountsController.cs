@@ -290,13 +290,15 @@ namespace Photography.Controllers
         public IActionResult Delete(string id)
         {
 
-            Account account = accountService.GetAccountById(id);
+            /*Account account = accountService.GetAccountById(id);
             if (account == null)
             {
                 return NotFound();
             }
 
-            return View(account);
+            return View(account);*/
+            accountService.RemoveAccount(id);
+            return RedirectToAction(nameof(Index));
         }
 
         // POST: Accounts/Delete/5

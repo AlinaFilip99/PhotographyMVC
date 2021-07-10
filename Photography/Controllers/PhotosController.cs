@@ -20,12 +20,10 @@ namespace Photography.Controllers
     {
         private readonly PhotoService photoService;
         private readonly PostService postService;
-        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public PhotosController(PhotoService photoService, IWebHostEnvironment webHostEnvironment, PostService postService)
+        public PhotosController(PhotoService photoService, PostService postService)
         {
             this.photoService = photoService;
-            this._webHostEnvironment = webHostEnvironment;
             this.postService = postService;
         }
 

@@ -101,6 +101,11 @@ namespace Photography.Controllers
             };
             return View(PPCViewModel);
         }
+        public IActionResult DeleteComm(int id, int postid)
+        {
+            commentService.RemoveComment(id);
+            return RedirectToAction("Details", new { id = postid });
+        }
 
         // GET: Posts/Create
         public IActionResult Create()

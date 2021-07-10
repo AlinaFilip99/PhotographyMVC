@@ -119,13 +119,15 @@ namespace Photography.Controllers
         public IActionResult Delete(int id)
         {
 
-            var comment = commentService.GetCommentById(id);
+            /*var comment = commentService.GetCommentById(id);
             if (comment == null)
             {
                 return NotFound();
             }
 
-            return View(comment);
+            return View(comment);*/
+            commentService.RemoveComment(id);
+            return RedirectToAction("Details", "Posts", new { id = id });
         }
 
         // POST: Comments/Delete/5
